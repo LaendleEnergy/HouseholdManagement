@@ -1,15 +1,32 @@
 package at.fhv.master.laendleenergy.domain;
 
-public class Device {
-    private DeviceCategory deviceCategory;
-    private String name;
+import jakarta.persistence.*;
+import java.util.UUID;
 
-    public Device(DeviceCategory deviceCategory, String name) {
+@Entity
+@Table(name="device")
+public class Device {
+    @Id
+    @Column(name = "device_id")
+    private String id;
+    @Column(name = "device_category")
+    @Enumerated(EnumType.STRING)
+    private DeviceCategory deviceCategory;
+    @Column(name="device_name")
+    private String name;
+    @ManyToOne
+    @JoinColumn(name = "household_id")
+    private Household household;
+
+    public Device(DeviceCategory deviceCategory, String name, Household household) {
+        this.id = UUID.randomUUID().toString();
         this.deviceCategory = deviceCategory;
         this.name = name;
+        this.household = household;
     }
 
     public Device() {
+        this.id = UUID.randomUUID().toString();
     }
 
     public DeviceCategory getDeviceCategory() {
@@ -26,5 +43,21 @@ public class Device {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Household getHousehold() {
+        return household;
+    }
+
+    public void setHousehold(Household household) {
+        this.household = household;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 }

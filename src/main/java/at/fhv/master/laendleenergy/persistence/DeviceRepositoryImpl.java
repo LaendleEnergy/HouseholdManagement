@@ -1,7 +1,9 @@
 package at.fhv.master.laendleenergy.persistence;
 
 import at.fhv.master.laendleenergy.domain.DeviceCategory;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class DeviceRepositoryImpl implements DeviceRepository {
     @Override
     public void addDevice(String name, DeviceCategory category) {
