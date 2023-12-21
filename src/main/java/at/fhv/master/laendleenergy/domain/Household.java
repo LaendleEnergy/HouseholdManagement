@@ -11,10 +11,10 @@ public class Household {
     @Column(name = "household_id")
     private String id;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "incentive_id", referencedColumnName = "id")
+    @JoinColumn(name = "incentive_id")
     private Incentive incentive;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "saving_target_id", referencedColumnName = "id")
+    @JoinColumn(name = "saving_target_id")
     private EnergySavingTarget savingTarget;
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Device> devices;
@@ -22,15 +22,15 @@ public class Household {
     private boolean wantsReport;
 
     public Household() {
-        this.id = UUID.randomUUID().toString();
+
     }
 
-    public Household(Incentive incentive, EnergySavingTarget savingTarget, List<Device> devices, boolean wantsReport) {
+    public Household(String id, Incentive incentive, EnergySavingTarget savingTarget, List<Device> devices, boolean wantsReport) {
         this.incentive = incentive;
         this.savingTarget = savingTarget;
         this.devices = devices;
         this.wantsReport = wantsReport;
-        this.id = UUID.randomUUID().toString();
+        this.id = id;
     }
 
     public Incentive getIncentive() {

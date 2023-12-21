@@ -9,10 +9,14 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
+import java.util.LinkedList;
+
 @ApplicationScoped
 public class EnergySavingRepositoryImpl implements EnergySavingRepository {
     @Inject
     EntityManager entityManager;
+    @Inject
+    HouseholdRepository householdRepository;
 
     @Override
     public void addSavingTarget(int value, int timeframe) {
@@ -23,10 +27,14 @@ public class EnergySavingRepositoryImpl implements EnergySavingRepository {
     @Transactional
     public void updateIncentive(String householdId, Incentive incentive) throws HouseholdNotFoundException {
         Household household = entityManager.find(Household.class, householdId);
-        if (household == null) throw new HouseholdNotFoundException();
 
-        household.setIncentive(incentive);
-        entityManager.merge(household);
+        if (household == null) {
+            Household newHousehold = new Household(householdId, incentive, new EnergySavingTarget(), new LinkedList<>(), false);
+            householdRepository.addHousehold(newHousehold);
+        } else {
+            household.setIncentive(incentive);
+            entityManager.merge(household);
+        }
     }
 
     @Override
@@ -35,9 +43,14 @@ public class EnergySavingRepositoryImpl implements EnergySavingRepository {
     }
 
     @Override
-    public Incentive getCurrentIncentive(String householdId) throws HouseholdNotFoundException {
+    public Incentive getCurrentIncentive(String householdId) {
         Household household = entityManager.find(Household.class, householdId);
-        if (household == null) throw new HouseholdNotFoundException();
+
+        if (household == null) {
+            Household newHousehold = new Household(householdId, new Incentive(), new EnergySavingTarget(), new LinkedList<>(), false);
+            householdRepository.addHousehold(newHousehold);
+            return newHousehold.getIncentive();
+        }
 
         return household.getIncentive();
     }

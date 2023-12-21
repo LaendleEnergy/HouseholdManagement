@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  householdmanagement:
+    container_name: householdmanagement
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    ports:
+      - "8080:8081"

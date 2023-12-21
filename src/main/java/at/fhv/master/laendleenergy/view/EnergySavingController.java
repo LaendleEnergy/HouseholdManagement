@@ -4,10 +4,7 @@ import at.fhv.master.laendleenergy.application.EnergySavingService;
 import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -26,13 +23,11 @@ public class EnergySavingController {
 
     @GET
     @Path("/getCurrentIncentive")
-    @Authenticated
-    public Response getCurrentIncentive(@Context SecurityContext ctx) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCurrentIncentive() {
         boolean hasJWT = jwt.getClaimNames() != null;
-        Principal caller = ctx.getUserPrincipal();
-        String name = caller == null ? "anonymous" : caller.getName();
 
-        if (hasJWT && jwt.containsClaim("householdId") && name.equals(jwt.getName())) {
+        if (hasJWT && jwt.containsClaim("householdId")) {
             String householdId = jwt.getClaim("householdId");
             try {
                 return Response.ok(energySavingService.getCurrentIncentive(householdId), MediaType.APPLICATION_JSON).build();
@@ -40,19 +35,16 @@ public class EnergySavingController {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/updateIncentive")
-    @Authenticated
-    public Response updateIncentive(@Context SecurityContext ctx, IncentiveDTO incentiveDTO) {
+    public Response updateIncentive(IncentiveDTO incentiveDTO) {
         boolean hasJWT = jwt.getClaimNames() != null;
-        Principal caller = ctx.getUserPrincipal();
-        String name = caller == null ? "anonymous" : caller.getName();
 
-        if (hasJWT && jwt.containsClaim("householdId") && name.equals(jwt.getName())) {
+        if (hasJWT && jwt.containsClaim("householdId")) {
             String householdId = jwt.getClaim("householdId");
             try {
                 energySavingService.updateIncentive(householdId, incentiveDTO);
@@ -61,6 +53,6 @@ public class EnergySavingController {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 }

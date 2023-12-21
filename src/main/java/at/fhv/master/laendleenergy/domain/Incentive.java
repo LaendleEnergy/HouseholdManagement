@@ -1,7 +1,6 @@
 package at.fhv.master.laendleenergy.domain;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -15,8 +14,6 @@ public class Incentive {
     private String description;
     @Column(name = "end_date")
     private LocalDate endDate;
-    @OneToOne(mappedBy = "incentive")
-    private Household household;
 
     public Incentive() {
         this.id = UUID.randomUUID().toString();
@@ -56,13 +53,5 @@ public class Incentive {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
-    }
-
-    public Household getHousehold() {
-        return household;
-    }
-
-    public void setHousehold(Household household) {
-        this.household = household;
     }
 }
