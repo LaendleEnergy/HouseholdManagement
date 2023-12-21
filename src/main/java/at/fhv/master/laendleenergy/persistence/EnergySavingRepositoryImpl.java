@@ -7,8 +7,6 @@ import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
-
 import java.util.LinkedList;
 
 @ApplicationScoped
@@ -19,17 +17,11 @@ public class EnergySavingRepositoryImpl implements EnergySavingRepository {
     HouseholdRepository householdRepository;
 
     @Override
-    public void addSavingTarget(int value, int timeframe) {
-
-    }
-
-    @Override
-    @Transactional
-    public void updateIncentive(String householdId, Incentive incentive) throws HouseholdNotFoundException {
+    public void updateIncentive(String householdId, Incentive incentive) {
         Household household = entityManager.find(Household.class, householdId);
 
         if (household == null) {
-            Household newHousehold = new Household(householdId, incentive, new EnergySavingTarget(), new LinkedList<>(), false);
+            Household newHousehold = new Household(householdId, incentive, new EnergySavingTarget(), new LinkedList<>());
             householdRepository.addHousehold(newHousehold);
         } else {
             household.setIncentive(incentive);
@@ -38,16 +30,11 @@ public class EnergySavingRepositoryImpl implements EnergySavingRepository {
     }
 
     @Override
-    public void receiveReport(boolean receive) {
-
-    }
-
-    @Override
     public Incentive getCurrentIncentive(String householdId) {
         Household household = entityManager.find(Household.class, householdId);
 
         if (household == null) {
-            Household newHousehold = new Household(householdId, new Incentive(), new EnergySavingTarget(), new LinkedList<>(), false);
+            Household newHousehold = new Household(householdId, new Incentive("Noch keine Belohnung festgelegt.", null), new EnergySavingTarget(), new LinkedList<>());
             householdRepository.addHousehold(newHousehold);
             return newHousehold.getIncentive();
         }
@@ -59,4 +46,11 @@ public class EnergySavingRepositoryImpl implements EnergySavingRepository {
     public EnergySavingTarget getCurrentSavingTarget(String householdId) {
         return null;
     }
+
+
+    @Override
+    public void addSavingTarget(int value, int timeframe) {
+
+    }
+
 }

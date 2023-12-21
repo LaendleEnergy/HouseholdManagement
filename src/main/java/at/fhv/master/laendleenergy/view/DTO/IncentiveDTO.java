@@ -1,8 +1,6 @@
 package at.fhv.master.laendleenergy.view.DTO;
 
-import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.Incentive;
-
 import java.time.LocalDate;
 
 public class IncentiveDTO {
@@ -12,14 +10,22 @@ public class IncentiveDTO {
 
     public IncentiveDTO() {}
 
-    public IncentiveDTO(String description, String endDate, String id) {
+    public IncentiveDTO(String id, String description, String endDate) {
         this.description = description;
         this.endDate = endDate;
         this.id = id;
     }
 
     public static Incentive create(IncentiveDTO incentiveDTO) {
-        return new Incentive(incentiveDTO.getId(), incentiveDTO.getDescription(), LocalDate.parse(incentiveDTO.getEndDate()));
+        return new Incentive(incentiveDTO.getId(),
+                incentiveDTO.getDescription(),
+                LocalDate.parse(incentiveDTO.getEndDate()));
+    }
+
+    public static IncentiveDTO create(Incentive incentive) {
+        return new IncentiveDTO(incentive.getId(),
+                incentive.getDescription(),
+                incentive.getEndDate() != null ? incentive.getEndDate().toString() : "");
     }
 
     public String getDescription() {
