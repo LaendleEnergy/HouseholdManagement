@@ -1,10 +1,7 @@
 package at.fhv.master.laendleenergy.application;
 
-import at.fhv.master.laendleenergy.domain.EnergySavingTarget;
-import at.fhv.master.laendleenergy.domain.Incentive;
-import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.EnergySavingRepository;
-import at.fhv.master.laendleenergy.view.DTO.EnergySavingTargetDTO;
+import at.fhv.master.laendleenergy.view.DTO.SavingTargetDTO;
 import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,14 +15,14 @@ public class EnergySavingServiceImpl implements EnergySavingService {
 
     @Override
     @Transactional
-    public void addSavingTarget(int value, int timeframe) {
-
+    public void updateSavingTarget(String householdId, SavingTargetDTO savingTargetDTO) {
+        energySavingRepository.updateSavingTarget(householdId, SavingTargetDTO.create(savingTargetDTO));
     }
 
     @Override
     @Transactional
-    public EnergySavingTargetDTO getCurrentSavingTarget(String householdId) {
-        return null;
+    public SavingTargetDTO getCurrentSavingTarget(String householdId) {
+        return SavingTargetDTO.create(energySavingRepository.getCurrentSavingTarget(householdId));
     }
 
     @Override
