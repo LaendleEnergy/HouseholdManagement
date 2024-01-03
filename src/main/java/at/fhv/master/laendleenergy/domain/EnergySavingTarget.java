@@ -1,6 +1,7 @@
 package at.fhv.master.laendleenergy.domain;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -52,5 +53,27 @@ public class EnergySavingTarget {
 
     public void setTimeframe(String timeframe) {
         this.timeframe = timeframe;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EnergySavingTarget that = (EnergySavingTarget) o;
+        return percentage == that.percentage && Objects.equals(id, that.id) && Objects.equals(timeframe, that.timeframe);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, timeframe, percentage);
+    }
+
+    @Override
+    public String toString() {
+        return "EnergySavingTarget{" +
+                "id='" + id + '\'' +
+                ", timeframe='" + timeframe + '\'' +
+                ", percentage=" + percentage +
+                '}';
     }
 }

@@ -17,16 +17,19 @@ public class Household {
     private EnergySavingTarget savingTarget;
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Device> devices;
+    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HouseholdMember> householdMembers;
 
     public Household() {
 
     }
 
-    public Household(String id, Incentive incentive, EnergySavingTarget savingTarget, List<Device> devices) {
+    public Household(String id, Incentive incentive, EnergySavingTarget savingTarget, List<Device> devices, List<HouseholdMember> householdMembers) {
         this.incentive = incentive;
         this.savingTarget = savingTarget;
         this.devices = devices;
         this.id = id;
+        this.householdMembers = householdMembers;
     }
 
     public Incentive getIncentive() {
@@ -59,5 +62,13 @@ public class Household {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setHouseholdMembers(List<HouseholdMember> householdMembers) {
+        this.householdMembers = householdMembers;
+    }
+
+    public List<HouseholdMember> getHouseholdMembers() {
+        return householdMembers;
     }
 }

@@ -2,6 +2,7 @@ package at.fhv.master.laendleenergy.domain;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -53,5 +54,27 @@ public class Incentive {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Incentive incentive = (Incentive) o;
+        return Objects.equals(id, incentive.id) && Objects.equals(description, incentive.description) && Objects.equals(endDate, incentive.endDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description, endDate);
+    }
+
+    @Override
+    public String toString() {
+        return "Incentive{" +
+                "id='" + id + '\'' +
+                ", description='" + description + '\'' +
+                ", endDate=" + endDate +
+                '}';
     }
 }

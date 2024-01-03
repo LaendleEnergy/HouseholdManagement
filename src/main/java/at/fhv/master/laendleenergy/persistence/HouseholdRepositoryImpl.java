@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.LinkedList;
+import java.util.List;
 
 @ApplicationScoped
 public class HouseholdRepositoryImpl implements HouseholdRepository {
@@ -18,7 +19,7 @@ public class HouseholdRepositoryImpl implements HouseholdRepository {
         Household household = entityManager.find(Household.class, householdId);
 
         if (household == null) {
-            Household newHousehold = new Household(householdId, new Incentive("Noch keine Belohnung festgelegt.", null), new EnergySavingTarget(), new LinkedList<>());
+            Household newHousehold = new Household(householdId, new Incentive("Noch keine Belohnung festgelegt.", null), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
             addHousehold(newHousehold);
             return newHousehold;
         }
@@ -26,9 +27,8 @@ public class HouseholdRepositoryImpl implements HouseholdRepository {
     }
 
     @Override
-    public String addHousehold(Household household) {
+    public void addHousehold(Household household) {
         entityManager.persist(household);
-        return household.getId();
     }
 
     @Override
@@ -52,6 +52,14 @@ public class HouseholdRepositoryImpl implements HouseholdRepository {
         Household household = entityManager.find(Household.class, householdId);
         if(household == null) throw new HouseholdNotFoundException();
 
-        return  household;
+        return household;
+    }
+
+    @Override
+    public List<HouseholdMember> getMembersOfHousehold(String householdId) throws HouseholdNotFoundException {
+        Household household = entityManager.find(Household.class, householdId);
+        if(household == null) throw new HouseholdNotFoundException();
+
+        return household.getHouseholdMembers();
     }
 }
