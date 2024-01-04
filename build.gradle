@@ -20,8 +20,11 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-jwt-build'
     implementation("io.quarkus:quarkus-smallrye-jwt")
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation 'io.rest-assured:rest-assured'
     implementation("io.quarkus:quarkus-smallrye-openapi")
+    testImplementation("io.quarkus:quarkus-jacoco")
+    testImplementation("io.quarkus:quarkus-test-security-jwt")
 }
 
 group 'at.fhv.master.laendleenergy'

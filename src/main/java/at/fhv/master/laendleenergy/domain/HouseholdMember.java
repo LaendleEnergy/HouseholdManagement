@@ -46,26 +46,4 @@ public class HouseholdMember {
     public void setHousehold(Household household) {
         this.household = household;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HouseholdMember that = (HouseholdMember) o;
-        return numberOfCreatedTags == that.numberOfCreatedTags && Objects.equals(emailAddress, that.emailAddress) && Objects.equals(household, that.household);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(emailAddress, numberOfCreatedTags, household);
-    }
-
-    @Override
-    public String toString() {
-        return "HouseholdMember{" +
-                "emailAddress='" + emailAddress + '\'' +
-                ", numberOfCreatedTags=" + numberOfCreatedTags +
-                ", household=" + household +
-                '}';
-    }
 }
