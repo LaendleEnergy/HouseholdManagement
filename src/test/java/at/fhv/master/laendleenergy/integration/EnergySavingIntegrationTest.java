@@ -1,22 +1,18 @@
-package at.fhv.master.laendleenergy.endpoints;
+package at.fhv.master.laendleenergy.integration;
 
-import at.fhv.master.laendleenergy.application.LeaderboardService;
-import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
-import at.fhv.master.laendleenergy.view.LeaderboardController;
-import io.quarkus.test.InjectMock;
+import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
+import at.fhv.master.laendleenergy.view.EnergySavingController;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import java.time.LocalDate;
 import static io.restassured.RestAssured.given;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 
 @QuarkusTest
-@TestHTTPEndpoint(LeaderboardController.class)
-public class LeaderboardControllerTests {
-    @InjectMock
-    LeaderboardService leaderboardService;
+@TestHTTPEndpoint(EnergySavingController.class)
+public class EnergySavingIntegrationTest {
 
     /*
     {
@@ -34,45 +30,51 @@ public class LeaderboardControllerTests {
     }
      */
     private final String validJwtToken = "eyJraWQiOiIvcHJpdmF0ZWtleS5wZW0iLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FyZDMzMy5jb20iLCJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTcwNDcxMTgwMCwiZXhwIjozNjAwMTcwNDcxMTgwMCwiZ3JvdXBzIjpbIkFkbWluIl0sIm1lbWJlcklkIjoiMSIsImhvdXNlaG9sZElkIjoiaDEiLCJkZXZpY2VJZCI6IkQxIiwianRpIjoiYzlhNjJmYWEtMGIxZS00YzdiLTk3MDQtOTY0N2YwNGZmZDFjIn0.XgV-PnqA_LB9OFFE8-zr0UIMugTb6P4qPvymCoancALWvS4VJjF-tXjU02yms0YvSXC-GmpbyUDZtiPm26KApjawXaoNSa5gonsnTHl6s4bT8MkgUrNNs9Di9KmCHgoTohgr9B7pelM6eJCOf5tT-phkoSvaxxrYn099BYsUeA1DVVsApic1egEV1ItZYRops8XUR-KPydeimgYq6tpc2g-7L7RiNIYkssvVxxh25-EGn8lLkivBu3gA7_2siCZfVZbP8JWagT629OK9B_GpnOhz8_-p5KSjMRjDTJBcRTnzYQDGzOB-RmsB0NZaLPw5ulqR1yN3r5KEpm-GExAKRw";
-    private final String invalidJwtToken = "eyJrawmuVxbfiwQ";
-    static final String householdId = "h1";
+    static IncentiveDTO incentiveDTO;
+    static final String incentiveDTOJSONString = "{\"id\":\"id\",\"description\":\"description\",\"endDate\":\"2024-10-10\"}";
+
+    @BeforeEach
+    void setUp() {
+        incentiveDTO = new IncentiveDTO("id", "description", LocalDate.of(2024,10,10).toString());
+    }
 
     @Test
-    public void testGetLeaderboardWithValidToken() throws HouseholdNotFoundException {
+    public void testGetCurrentIncentiveEndpointWithValidToken() {
         given()
                 .header("Authorization", "Bearer " + validJwtToken)
-                .when().get("/get")
+                .when().get("/getCurrentIncentive")
                 .then()
                 .statusCode(200);
-
-        Mockito.verify(leaderboardService, times(1)).getLeaderboardOfHousehold(householdId);
     }
 
     @Test
-    public void testGetLeaderboardWithInvalidToken() {
+    public void testUpdateIncentiveEndpointWithValidToken() {
         given()
-                .header("Authorization", "Bearer " + invalidJwtToken)
-                .when().get("/get")
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/updateIncentive")
                 .then()
-                .statusCode(401);
-    }
+                .statusCode(200);
+     }
 
     @Test
-    public void testGetLeaderboardUnauthenticated() {
-        given()
-                .when().get("/get")
-                .then()
-                .statusCode(401);
-    }
-
-    @Test
-    public void testGetCurrentIncentiveWithInternalServerError() throws HouseholdNotFoundException {
-        Mockito.when(leaderboardService.getLeaderboardOfHousehold(anyString())).thenThrow(NullPointerException.class);
-
+    public void testGetCurrentSavingTargetEndpointWithValidToken() {
         given()
                 .header("Authorization", "Bearer " + validJwtToken)
-                .when().get("/get")
+                .when().get("/getCurrentSavingTarget")
                 .then()
-                .statusCode(500);
-    }
+                .statusCode(200);
+      }
+
+    @Test
+    public void testUpdateSavingTargetEndpointWithValidToken() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/updateSavingTarget")
+                .then()
+                .statusCode(200);
+     }
 }
