@@ -1,37 +1,177 @@
 package at.fhv.master.laendleenergy.endpoints;
 
+import at.fhv.master.laendleenergy.application.EnergySavingService;
+import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
+import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
 import at.fhv.master.laendleenergy.view.EnergySavingController;
+import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.security.TestSecurity;
-import io.quarkus.test.security.jwt.Claim;
-import io.quarkus.test.security.jwt.JwtSecurity;
-import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.mockito.Mockito;
+import java.time.LocalDate;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 
 @QuarkusTest
 @TestHTTPEndpoint(EnergySavingController.class)
 public class EnergySavingControllerTests {
-    /*@Test
-    public void testGetCurrentIncentiveEndpointUnauthorized() {
+    @InjectMock
+    EnergySavingService energySavingService;
+
+    /*
+    {
+      "iss": "https://ard333.com",
+      "sub": "alice@example.com",
+      "iat": 1704711800,
+      "exp": 36001704711800,
+      "groups": [
+        "Admin"
+      ],
+      "memberId": "1",
+      "householdId": "h1",
+      "deviceId": "D1",
+      "jti": "c9a62faa-0b1e-4c7b-9704-9647f04ffd1c"
+    }
+     */
+    private final String validJwtToken = "eyJraWQiOiIvcHJpdmF0ZWtleS5wZW0iLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FyZDMzMy5jb20iLCJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTcwNDcxMTgwMCwiZXhwIjozNjAwMTcwNDcxMTgwMCwiZ3JvdXBzIjpbIkFkbWluIl0sIm1lbWJlcklkIjoiMSIsImhvdXNlaG9sZElkIjoiaDEiLCJkZXZpY2VJZCI6IkQxIiwianRpIjoiYzlhNjJmYWEtMGIxZS00YzdiLTk3MDQtOTY0N2YwNGZmZDFjIn0.XgV-PnqA_LB9OFFE8-zr0UIMugTb6P4qPvymCoancALWvS4VJjF-tXjU02yms0YvSXC-GmpbyUDZtiPm26KApjawXaoNSa5gonsnTHl6s4bT8MkgUrNNs9Di9KmCHgoTohgr9B7pelM6eJCOf5tT-phkoSvaxxrYn099BYsUeA1DVVsApic1egEV1ItZYRops8XUR-KPydeimgYq6tpc2g-7L7RiNIYkssvVxxh25-EGn8lLkivBu3gA7_2siCZfVZbP8JWagT629OK9B_GpnOhz8_-p5KSjMRjDTJBcRTnzYQDGzOB-RmsB0NZaLPw5ulqR1yN3r5KEpm-GExAKRw";
+    private final String invalidJwtToken = "eyJrawmuVxbfiwQ";
+    static IncentiveDTO incentiveDTO;
+    static final String householdId = "h1";
+    static final String incentiveDTOJSONString = "{\"id\":\"id\",\"description\":\"description\",\"endDate\":\"2024-10-10\"}";
+
+
+    @BeforeEach
+    void setUp() {
+        incentiveDTO = new IncentiveDTO("id", "description", LocalDate.of(2024,10,10).toString());
+    }
+
+    @Test
+    public void testGetCurrentIncentiveEndpointWithValidToken() {
         given()
-                .when().get("/saving/getCurrentIncentive")
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().get("/getCurrentIncentive")
+                .then()
+                .statusCode(200);
+
+        Mockito.verify(energySavingService, times(1)).getCurrentIncentive(householdId);
+    }
+
+    @Test
+    public void testGetCurrentIncentiveEndpointWithInvalidToken() {
+        given()
+                .header("Authorization", "Bearer " + invalidJwtToken)
+                .when().get("/getCurrentIncentive")
                 .then()
                 .statusCode(401);
     }
 
     @Test
-    @TestSecurity(user="alice@example.com", roles="Admin")
-    @JwtSecurity(claims = {
-            @Claim(key = "memberId", value = "1"),
-            @Claim(key = "householdId", value = "h1"),
-            @Claim(key = "deviceId", value = "D1")
-    })
-    public void testGetCurrentIncentiveEndpoint() {
-        RestAssured.when().get("test-security-jwt-claims").then().statusCode(200);
-    }*/
+    public void testGetCurrentIncentiveEndpointUnauthenticated() {
+        given()
+                .when().get("/getCurrentIncentive")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testUpdateIncentiveEndpointUnauthenticated() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .when().post("/updateIncentive")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testUpdateIncentiveEndpointWithValidToken() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/updateIncentive")
+                .then()
+                .statusCode(200);
+
+        Mockito.verify(energySavingService, times(1)).updateIncentive(anyString(), any());
+    }
+
+    @Test
+    public void testUpdateIncentiveEndpointWithInvalidToken() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .header("Authorization", "Bearer " + invalidJwtToken)
+                .when().post("/updateIncentive")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testGetCurrentSavingTargetEndpointWithValidToken() {
+        given()
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().get("/getCurrentSavingTarget")
+                .then()
+                .statusCode(200);
+
+        Mockito.verify(energySavingService, times(1)).getCurrentSavingTarget(householdId);
+    }
+
+    @Test
+    public void testGetCurrentSavingTargetEndpointWithInvalidToken() {
+        given()
+                .header("Authorization", "Bearer " + invalidJwtToken)
+                .when().get("/getCurrentSavingTarget")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testGetCurrentSavingTargetEndpointUnauthenticated() {
+        given()
+                .when().get("/getCurrentSavingTarget")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testUpdateSavingTargetEndpointWithValidToken() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/updateSavingTarget")
+                .then()
+                .statusCode(200);
+
+        Mockito.verify(energySavingService, times(1)).updateSavingTarget(anyString(), any());
+    }
+
+    @Test
+    public void testUpdateSavingTargetEndpointWithInvalidToken() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .header("Authorization", "Bearer " + invalidJwtToken)
+                .when().post("/updateSavingTarget")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testUpdateSavingTargetEndpointUnauthenticated() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .when().post("/updateSavingTarget")
+                .then()
+                .statusCode(401);
+    }
 
 }

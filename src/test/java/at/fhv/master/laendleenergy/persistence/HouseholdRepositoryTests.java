@@ -51,8 +51,8 @@ public class HouseholdRepositoryTests {
     public void createHouseholdIfNotExistsTest_HouseholdExists() {
         Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
 
-        Household returnedHousehold = householdRepository.createHouseholdIfNotExists(householdId);
-        assertEquals(returnedHousehold, household);
+        Household actualHousehold = householdRepository.createHouseholdIfNotExists(householdId);
+        assertEquals(actualHousehold, household);
     }
 
 
@@ -113,8 +113,8 @@ public class HouseholdRepositoryTests {
     public void getHouseholdById() throws HouseholdNotFoundException {
         Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
 
-        Household returnedHousehold = householdRepository.getHouseholdById(householdId);
-        assertEquals(returnedHousehold, household);
+        Household actualHousehold = householdRepository.getHouseholdById(householdId);
+        assertEquals(actualHousehold, household);
     }
 
     @Test
@@ -126,8 +126,8 @@ public class HouseholdRepositoryTests {
     public void getMembersOfHousehold() throws HouseholdNotFoundException {
         Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
 
-        Household returnedHousehold = householdRepository.getHouseholdById(householdId);
-        assertEquals(returnedHousehold.getHouseholdMembers(), household.getHouseholdMembers());
+        Household actualHousehold = householdRepository.getHouseholdById(householdId);
+        assertEquals(actualHousehold.getHouseholdMembers(), household.getHouseholdMembers());
     }
 
     @Test

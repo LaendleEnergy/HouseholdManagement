@@ -1,6 +1,5 @@
-package at.fhv.master.laendleenergy.integration;
+package at.fhv.master.laendleenergy.application;
 
-import at.fhv.master.laendleenergy.application.EnergySavingService;
 import at.fhv.master.laendleenergy.domain.EnergySavingTarget;
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.Incentive;
