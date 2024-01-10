@@ -28,6 +28,8 @@ If you want to build an _über-jar_, execute the following command:
 ```shell script
 ./gradlew build -Dquarkus.package.type=uber-jar
 ```
+## Testing
+You can run the tests via the `quarkus test` command
 
 ## Docker
 
@@ -38,10 +40,6 @@ Then, build the image with:
 Then run the container using:
 `docker run -i --rm -p 8080:8080 quarkus/household-management-jvm`
 
-## Provided Code
-
-### RESTEasy Reactive
-
-Easily start your Reactive RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+## OpenAPI 
+The Swagger OpenAPI definition for this application is available at:
+http://localhost:8081/swagger/
