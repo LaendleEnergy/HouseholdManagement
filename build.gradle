@@ -20,12 +20,16 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-jwt-build'
     implementation("io.quarkus:quarkus-smallrye-jwt")
     implementation("io.quarkus:quarkus-smallrye-openapi")
+    implementation("io.quarkus:quarkus-scheduler")
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation 'io.rest-assured:rest-assured'
     implementation("io.quarkus:quarkus-smallrye-openapi")
+    implementation 'io.lettuce:lettuce-core:6.3.0.RELEASE'
     testImplementation("io.quarkus:quarkus-jacoco")
     testImplementation("io.quarkus:quarkus-test-security-jwt")
+    implementation("io.quarkus:quarkus-redis-client")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }
 
 group 'at.fhv.master.laendleenergy'

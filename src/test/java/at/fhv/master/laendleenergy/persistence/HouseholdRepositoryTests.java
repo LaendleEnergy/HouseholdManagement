@@ -86,7 +86,7 @@ public class HouseholdRepositoryTests {
         updatedHousehold.setIncentive(new Incentive("new description", LocalDate.of(2000, 1,1)));
         updatedHousehold.setSavingTarget(new EnergySavingTarget(40, "Vorjahr"));
         List<HouseholdMember> members = new LinkedList<>();
-        members.add(new HouseholdMember("newemail@com", 0, updatedHousehold));
+        members.add(new HouseholdMember("1", "newemail@com", 0, updatedHousehold));
         updatedHousehold.setHouseholdMembers(members);
         updatedHousehold.setDevices(new LinkedList<>());
 
@@ -101,7 +101,7 @@ public class HouseholdRepositoryTests {
         updatedHousehold.setIncentive(new Incentive("new description", LocalDate.of(2000, 1,1)));
         updatedHousehold.setSavingTarget(new EnergySavingTarget(40, "Vorjahr"));
         List<HouseholdMember> members = new LinkedList<>();
-        members.add(new HouseholdMember("newemail@com", 0, updatedHousehold));
+        members.add(new HouseholdMember("1", "newemail@com", 0, updatedHousehold));
         updatedHousehold.setHouseholdMembers(members);
         updatedHousehold.setDevices(new LinkedList<>());
 

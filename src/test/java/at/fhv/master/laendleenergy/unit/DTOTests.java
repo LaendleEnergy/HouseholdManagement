@@ -67,7 +67,7 @@ public class DTOTests {
 
     @Test
     public void householdMemberDTOCreateTest() {
-        HouseholdMember householdMember = new HouseholdMember("test@email.de", 0, household);
+        HouseholdMember householdMember = new HouseholdMember("1", "test@email.de", 0, household);
         HouseholdMemberDTO householdMemberDTO = HouseholdMemberDTO.create(householdMember);
 
         assertEquals(householdMember.getEmailAddress(), householdMemberDTO.getEmailAddress());

@@ -2,11 +2,14 @@ package at.fhv.master.laendleenergy.domain;
 
 import jakarta.persistence.*;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name="household_member")
 public class HouseholdMember {
     @Id
+    @Column(name = "id")
+    private String id;
     @Column(name = "emailAddress")
     private String emailAddress;
     @Column(name = "numberOfCreatedTags")
@@ -17,7 +20,8 @@ public class HouseholdMember {
 
     public HouseholdMember() {}
 
-    public HouseholdMember(String emailAddress, int numberOfCreatedTags, Household household) {
+    public HouseholdMember(String id, String emailAddress, int numberOfCreatedTags, Household household) {
+        this.id = id;
         this.emailAddress = emailAddress;
         this.numberOfCreatedTags = numberOfCreatedTags;
         this.household = household;
@@ -45,5 +49,17 @@ public class HouseholdMember {
 
     public void setHousehold(Household household) {
         this.household = household;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void increaseNumberOfCreatedTags() {
+        this.numberOfCreatedTags +=1;
     }
 }

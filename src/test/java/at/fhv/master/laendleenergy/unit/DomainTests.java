@@ -65,15 +65,17 @@ public class DomainTests {
 
     @Test
     public void householdMemberTest() {
-        HouseholdMember householdMember = new HouseholdMember("test@email.com", 0, household);
+        HouseholdMember householdMember = new HouseholdMember("1", "test@email.com", 0, household);
         householdMember.setEmailAddress("test@email.com.new");
         householdMember.setNumberOfCreatedTags(1);
+        householdMember.setId("2");
         Household newHousehold = new Household();
         householdMember.setHousehold(newHousehold);
 
         assertEquals("test@email.com.new", householdMember.getEmailAddress());
         assertEquals(newHousehold, householdMember.getHousehold());
         assertEquals(1, householdMember.getNumberOfCreatedTags());
+        assertEquals("2", householdMember.getId());
     }
 
     @Test

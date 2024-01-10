@@ -37,9 +37,9 @@ public class LeaderboardServiceTests {
                 new LinkedList<>());
 
         List<HouseholdMember> members = new LinkedList<>();
-        members.add(new HouseholdMember("testemail1@email.com", 3, household));
-        members.add(new HouseholdMember("testemail2@email.com", 10, household));
-        members.add(new HouseholdMember("testemail3@email.com", 1, household));
+        members.add(new HouseholdMember("1", "testemail1@email.com", 3, household));
+        members.add(new HouseholdMember("2", "testemail2@email.com", 10, household));
+        members.add(new HouseholdMember("3", "testemail3@email.com", 1, household));
         household.setHouseholdMembers(members);
 
         Mockito.when(repository.getMembersOfHousehold(householdId)).thenReturn(household.getHouseholdMembers());
