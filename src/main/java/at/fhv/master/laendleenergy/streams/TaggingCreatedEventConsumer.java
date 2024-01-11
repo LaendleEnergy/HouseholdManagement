@@ -5,6 +5,7 @@ import at.fhv.master.laendleenergy.domain.HouseholdMember;
 import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
+import io.quarkus.scheduler.Scheduled;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,6 +15,7 @@ import java.util.Map;
 import io.lettuce.core.*;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
+import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
@@ -62,7 +64,8 @@ public class TaggingCreatedEventConsumer {
         }
     }
 
-    //@Scheduled(every="10s")
+    @Scheduled(every="10s")
+    @Transactional
     public void consume() throws HouseholdNotFoundException {
         List<StreamMessage<String, String>> messages = syncCommands.xreadgroup(
                 Consumer.from(GROUP_NAME, "consumer_1"),

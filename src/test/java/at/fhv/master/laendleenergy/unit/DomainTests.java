@@ -1,10 +1,12 @@
 package at.fhv.master.laendleenergy.unit;
 
 import at.fhv.master.laendleenergy.domain.*;
+import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -86,5 +88,21 @@ public class DomainTests {
 
         assertEquals("new test description", incentive.getDescription());
         assertEquals(LocalDate.of(2021, 10, 10), incentive.getEndDate());
+    }
+
+    @Test
+    public void taggingCreatedEventTest() {
+        TaggingCreatedEvent event = new TaggingCreatedEvent("event1", LocalDateTime.now(), "1", "D1", "h1");
+        event.setEventId("event2");
+        event.setDeviceId("d2");
+        event.setTaggingTime(LocalDateTime.of(2000,1,1, 1, 1, 1));
+        event.setUserId("user1");
+        event.setHouseholdId("household1");
+
+        assertEquals("event2", event.getEventId());
+        assertEquals("d2", event.getDeviceId());
+        assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTaggingTime());
+        assertEquals("user1", event.getUserId());
+        assertEquals("household1", event.getHouseholdId());
     }
 }
