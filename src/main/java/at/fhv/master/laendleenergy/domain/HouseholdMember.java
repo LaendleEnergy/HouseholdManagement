@@ -1,8 +1,7 @@
 package at.fhv.master.laendleenergy.domain;
 
+import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
 import jakarta.persistence.*;
-import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Table(name="household_member")
@@ -10,8 +9,8 @@ public class HouseholdMember {
     @Id
     @Column(name = "id")
     private String id;
-    @Column(name = "emailAddress")
-    private String emailAddress;
+    @Column(name = "name")
+    private String name;
     @Column(name = "numberOfCreatedTags")
     private int numberOfCreatedTags;
     @ManyToOne
@@ -20,19 +19,23 @@ public class HouseholdMember {
 
     public HouseholdMember() {}
 
-    public HouseholdMember(String id, String emailAddress, int numberOfCreatedTags, Household household) {
+    public HouseholdMember(String id, String name, int numberOfCreatedTags, Household household) {
         this.id = id;
-        this.emailAddress = emailAddress;
+        this.name = name;
         this.numberOfCreatedTags = numberOfCreatedTags;
         this.household = household;
     }
 
-    public String getEmailAddress() {
-        return emailAddress;
+    public static HouseholdMember create(String memberId, String name, Household household) {
+        return new HouseholdMember(memberId, name, 0, household);
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getNumberOfCreatedTags() {

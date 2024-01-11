@@ -1,6 +1,7 @@
 package at.fhv.master.laendleenergy.endpoints;
 
 import at.fhv.master.laendleenergy.application.EnergySavingService;
+import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
 import at.fhv.master.laendleenergy.view.DTO.SavingTargetDTO;
 import at.fhv.master.laendleenergy.view.EnergySavingController;
@@ -53,7 +54,7 @@ public class EnergySavingControllerTests {
     }
 
     @Test
-    public void testGetCurrentIncentiveEndpointWithValidToken() {
+    public void testGetCurrentIncentiveEndpointWithValidToken() throws HouseholdNotFoundException {
         given()
                 .header("Authorization", "Bearer " + validJwtToken)
                 .when().get("/getCurrentIncentive")
@@ -81,7 +82,7 @@ public class EnergySavingControllerTests {
     }
 
     @Test
-    public void testGetCurrentIncentiveWithInternalServerError() {
+    public void testGetCurrentIncentiveWithInternalServerError() throws HouseholdNotFoundException {
         Mockito.when(energySavingService.getCurrentIncentive(anyString())).thenThrow(NullPointerException.class);
 
         given()
@@ -102,7 +103,7 @@ public class EnergySavingControllerTests {
     }
 
     @Test
-    public void testUpdateIncentiveEndpointWithValidToken() {
+    public void testUpdateIncentiveEndpointWithValidToken() throws HouseholdNotFoundException {
         given()
                 .contentType(ContentType.JSON)
                 .body(incentiveDTOJSONString)
@@ -126,7 +127,7 @@ public class EnergySavingControllerTests {
     }
 
     @Test
-    public void testUpdateIncentiveEndpointWithInternalServerError() {
+    public void testUpdateIncentiveEndpointWithInternalServerError() throws HouseholdNotFoundException {
         Mockito.doThrow(NullPointerException.class).when(energySavingService).updateIncentive(anyString(), any());
 
         given()
@@ -139,7 +140,7 @@ public class EnergySavingControllerTests {
     }
 
     @Test
-    public void testGetCurrentSavingTargetEndpointWithValidToken() {
+    public void testGetCurrentSavingTargetEndpointWithValidToken() throws HouseholdNotFoundException {
         given()
                 .header("Authorization", "Bearer " + validJwtToken)
                 .when().get("/getCurrentSavingTarget")
@@ -167,7 +168,7 @@ public class EnergySavingControllerTests {
     }
 
     @Test
-    public void testGetCurrentSavingTargetEndpointInternalServerErrorException() {
+    public void testGetCurrentSavingTargetEndpointInternalServerErrorException() throws HouseholdNotFoundException {
         Mockito.when(energySavingService.getCurrentSavingTarget(anyString())).thenThrow(NullPointerException.class);
 
         given()
@@ -178,7 +179,7 @@ public class EnergySavingControllerTests {
     }
 
     @Test
-    public void testUpdateSavingTargetEndpointWithValidToken() {
+    public void testUpdateSavingTargetEndpointWithValidToken() throws HouseholdNotFoundException {
         given()
                 .contentType(ContentType.JSON)
                 .body(savingTargetDTOJSONString)
@@ -212,7 +213,7 @@ public class EnergySavingControllerTests {
     }
 
     @Test
-    public void testUpdateSavingTargetEndpointWithInternalServerError() {
+    public void testUpdateSavingTargetEndpointWithInternalServerError() throws HouseholdNotFoundException {
         Mockito.doThrow(NullPointerException.class).when(energySavingService).updateSavingTarget(anyString(), any());
 
         given()

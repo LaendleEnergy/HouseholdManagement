@@ -1,6 +1,8 @@
 package at.fhv.master.laendleenergy.domain;
 
 import jakarta.persistence.*;
+
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -30,6 +32,10 @@ public class Household {
         this.devices = devices;
         this.id = id;
         this.householdMembers = householdMembers;
+    }
+
+    public static Household create(String householdId) {
+        return new Household(householdId, new Incentive("Noch keine Belohnung festgelegt.", null), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
     }
 
     public Incentive getIncentive() {
@@ -70,5 +76,12 @@ public class Household {
 
     public List<HouseholdMember> getHouseholdMembers() {
         return householdMembers;
+    }
+
+    public void addMemberToHousehold(HouseholdMember m) {
+        householdMembers.add(m);
+    }
+    public void removeMember(String memberId) {
+        householdMembers.removeIf(m -> m.getId().equals(memberId));
     }
 }

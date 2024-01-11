@@ -2,35 +2,37 @@ package at.fhv.master.laendleenergy.streams;
 
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
-import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
+import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
+import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
+import io.lettuce.core.*;
+import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.api.sync.RedisCommands;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import io.lettuce.core.*;
-import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.sync.RedisCommands;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @ApplicationScoped
-public class TaggingCreatedEventConsumer {
+public class MemberRemovedEventConsumer {
 
     @Inject
     HouseholdRepository householdRepository;
     @ConfigProperty(name = "redis-host")  private String redisHost;
     @ConfigProperty(name = "redis-port")  private String redisPort;
-    @ConfigProperty(name = "redis-tagging-created-key")  private String KEY;
-    @ConfigProperty(name = "redis-datacollector-group")  private String GROUP_NAME;
+    @ConfigProperty(name = "redis-member-removed-key")  private String KEY;
+    @ConfigProperty(name = "redis-accountmanagement-group")  private String GROUP_NAME;
 
     RedisCommands<String, String> syncCommands;
 
-    public TaggingCreatedEventConsumer(){
+    public MemberRemovedEventConsumer(){
 
     }
 
@@ -43,7 +45,7 @@ public class TaggingCreatedEventConsumer {
         initialize();
     }
 
-    private void initialize() {
+    protected void initialize() {
         if (syncCommands.exists(KEY) == 0) {
             Map<String, String> messageBody = new HashMap<>();
             messageBody.put( "testcreatekey", "testcreatevalue" );
@@ -74,22 +76,18 @@ public class TaggingCreatedEventConsumer {
 
         if (!messages.isEmpty()) {
             for (StreamMessage<String, String> m : messages) {
-                TaggingCreatedEvent event = TaggingCreatedEvent.fromStreamMessage(m);
-                increaseNumberOfTagsForMember(event.getHouseholdId(), event.getUserId());
+                MemberRemovedEvent event = MemberRemovedEvent.fromStreamMessage(m);
+                handleMemberRemovedEvent(event);
                 // Confirm that the message has been processed using XACK
                 syncCommands.xack(KEY, GROUP_NAME, m.getId());
             }
         }
     }
 
-    public void increaseNumberOfTagsForMember(String householdId, String memberId) throws HouseholdNotFoundException {
-        Household household = householdRepository.getHouseholdById(householdId);
+    public void handleMemberRemovedEvent(MemberRemovedEvent event) throws HouseholdNotFoundException {
+        Household household = householdRepository.getHouseholdById(event.getHouseholdId());
+        household.removeMember(event.getMemberId());
 
-        for (HouseholdMember member : household.getHouseholdMembers()) {
-            if (member.getId().equals(memberId)) {
-                member.increaseNumberOfCreatedTags();
-                return;
-            }
-        }
+        householdRepository.updateHousehold(household);
     }
 }

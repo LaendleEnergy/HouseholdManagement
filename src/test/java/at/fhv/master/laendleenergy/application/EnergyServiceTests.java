@@ -3,6 +3,7 @@ package at.fhv.master.laendleenergy.application;
 import at.fhv.master.laendleenergy.domain.EnergySavingTarget;
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.Incentive;
+import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.EnergySavingRepository;
 import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
 import at.fhv.master.laendleenergy.view.DTO.SavingTargetDTO;
@@ -33,7 +34,7 @@ public class EnergyServiceTests {
     static final String householdId = "householdId1";
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws HouseholdNotFoundException {
         household = new Household(householdId,
                 new Incentive("Pizza", LocalDate.of(2050, 10, 31)),
                 new EnergySavingTarget(10, "Vormonat"),
@@ -45,7 +46,7 @@ public class EnergyServiceTests {
     }
 
     @Test
-    public void getCurrentSavingTargetTest() {
+    public void getCurrentSavingTargetTest() throws HouseholdNotFoundException {
         SavingTargetDTO savingTargetDTO = service.getCurrentSavingTarget(householdId);
         assertEquals(household.getSavingTarget().getPercentage(), savingTargetDTO.getPercentage());
         assertEquals(household.getSavingTarget().getTimeframe(), savingTargetDTO.getTimeframe());
@@ -53,7 +54,7 @@ public class EnergyServiceTests {
     }
 
     @Test
-    public void updateSavingTargetTest() {
+    public void updateSavingTargetTest() throws HouseholdNotFoundException {
         SavingTargetDTO savingTargetDTO = SavingTargetDTO.create(household.getSavingTarget());
         savingTargetDTO.setPercentage(20);
         savingTargetDTO.setTimeframe("Vorjahr");
@@ -64,7 +65,7 @@ public class EnergyServiceTests {
     }
 
     @Test
-    public void getCurrentIncentiveTest() {
+    public void getCurrentIncentiveTest() throws HouseholdNotFoundException {
         IncentiveDTO incentiveDTO = service.getCurrentIncentive(householdId);
         assertEquals(household.getIncentive().getDescription(), incentiveDTO.getDescription());
         assertEquals(household.getIncentive().getEndDate().toString(), incentiveDTO.getEndDate());
@@ -72,7 +73,7 @@ public class EnergyServiceTests {
     }
 
     @Test
-    public void updateIncentiveTest() {
+    public void updateIncentiveTest() throws HouseholdNotFoundException {
         IncentiveDTO incentiveDTO = IncentiveDTO.create(household.getIncentive());
         incentiveDTO.setDescription("new description");
         incentiveDTO.setEndDate(LocalDate.of(2000, 10, 1).toString());

@@ -41,22 +41,6 @@ public class HouseholdRepositoryTests {
     }
 
     @Test
-    public void createHouseholdIfNotExistsTest() {
-        Household newHousehold = householdRepository.createHouseholdIfNotExists(householdId);
-        assertEquals(newHousehold.getIncentive().getDescription(), "Noch keine Belohnung festgelegt.");
-        assertEquals(newHousehold.getId(), householdId);
-    }
-
-    @Test
-    public void createHouseholdIfNotExistsTest_HouseholdExists() {
-        Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
-
-        Household actualHousehold = householdRepository.createHouseholdIfNotExists(householdId);
-        assertEquals(actualHousehold, household);
-    }
-
-
-    @Test
     public void addHouseholdTest() {
         householdRepository.addHousehold(household);
 

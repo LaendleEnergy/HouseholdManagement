@@ -1,6 +1,7 @@
 package at.fhv.master.laendleenergy.view;
 
 import at.fhv.master.laendleenergy.application.EnergySavingService;
+import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
 import at.fhv.master.laendleenergy.view.DTO.SavingTargetDTO;
 import io.quarkus.security.Authenticated;
@@ -30,6 +31,8 @@ public class EnergySavingController {
             String householdId = jwt.getClaim("householdId");
             try {
                 return Response.ok(energySavingService.getCurrentIncentive(householdId), MediaType.APPLICATION_JSON).build();
+            } catch (HouseholdNotFoundException e) {
+                return Response.status(Response.Status.NOT_FOUND).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
@@ -49,6 +52,8 @@ public class EnergySavingController {
             try {
                 energySavingService.updateIncentive(householdId, incentiveDTO);
                 return Response.ok().build();
+            } catch (HouseholdNotFoundException e) {
+                return Response.status(Response.Status.NOT_FOUND).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
@@ -67,6 +72,8 @@ public class EnergySavingController {
             String householdId = jwt.getClaim("householdId");
             try {
                 return Response.ok(energySavingService.getCurrentSavingTarget(householdId), MediaType.APPLICATION_JSON).build();
+            } catch (HouseholdNotFoundException e) {
+                return Response.status(Response.Status.NOT_FOUND).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
@@ -86,6 +93,8 @@ public class EnergySavingController {
             try {
                 energySavingService.updateSavingTarget(householdId, savingTargetDTO);
                 return Response.ok().build();
+            } catch (HouseholdNotFoundException e) {
+                return Response.status(Response.Status.NOT_FOUND).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }

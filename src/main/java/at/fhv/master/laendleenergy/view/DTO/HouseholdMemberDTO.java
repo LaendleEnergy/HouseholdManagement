@@ -1,6 +1,5 @@
 package at.fhv.master.laendleenergy.view.DTO;
 
-import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
 
 public class HouseholdMemberDTO {
@@ -16,7 +15,7 @@ public class HouseholdMemberDTO {
     }
 
     public static HouseholdMemberDTO create(HouseholdMember householdMember) {
-        return new HouseholdMemberDTO(householdMember.getEmailAddress(), householdMember.getNumberOfCreatedTags());
+        return new HouseholdMemberDTO(householdMember.getName(), householdMember.getNumberOfCreatedTags());
     }
 
     public String getEmailAddress() {

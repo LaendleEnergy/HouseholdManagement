@@ -1,6 +1,9 @@
 package at.fhv.master.laendleenergy.unit;
 
 import at.fhv.master.laendleenergy.domain.*;
+import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
+import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
+import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
 import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +24,8 @@ public class DomainTests {
                 new EnergySavingTarget(10, "Vormonat"),
                 new LinkedList<>(),
                 new LinkedList<>());
+
+        household.addMemberToHousehold(new HouseholdMember("member1", "name", 0, household));
     }
 
     @Test
@@ -66,18 +71,59 @@ public class DomainTests {
     }
 
     @Test
+    public void householdCreateTest() {
+        Household newhousehold = Household.create("household1");
+        assertEquals("household1", newhousehold.getId());
+        assertEquals(0, newhousehold.getHouseholdMembers().size());
+        assertEquals(0, newhousehold.getDevices().size());
+    }
+
+    @Test
     public void householdMemberTest() {
         HouseholdMember householdMember = new HouseholdMember("1", "test@email.com", 0, household);
-        householdMember.setEmailAddress("test@email.com.new");
+        householdMember.setName("test@email.com.new");
         householdMember.setNumberOfCreatedTags(1);
         householdMember.setId("2");
         Household newHousehold = new Household();
         householdMember.setHousehold(newHousehold);
 
-        assertEquals("test@email.com.new", householdMember.getEmailAddress());
+        assertEquals("test@email.com.new", householdMember.getName());
         assertEquals(newHousehold, householdMember.getHousehold());
         assertEquals(1, householdMember.getNumberOfCreatedTags());
         assertEquals("2", householdMember.getId());
+    }
+
+    @Test
+    public void householdAddMemberTest() {
+        HouseholdMember householdMember = new HouseholdMember("1", "test@email.com", 0, household);
+        Household household = new Household("householdid", new Incentive(), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
+        assertEquals(0, household.getHouseholdMembers().size());
+
+        household.addMemberToHousehold(householdMember);
+        assertEquals(1, household.getHouseholdMembers().size());
+    }
+
+    @Test
+    public void householdMemberCreateTest() {
+        MemberAddedEvent event = new MemberAddedEvent("event1", "member1", "name", "household1", LocalDateTime.now());
+
+        HouseholdMember actual = HouseholdMember.create(event.getMemberId(), event.getName(), household);
+
+        assertEquals(event.getMemberId(), actual.getId());
+        assertEquals(household.getId(), actual.getHousehold().getId());
+        assertEquals(event.getName(), actual.getName());
+        assertEquals(0, actual.getNumberOfCreatedTags());
+    }
+
+    @Test
+    public void householdRemoveMemberTest() {
+        MemberRemovedEvent event = new MemberRemovedEvent("event1", "member1", "household1", LocalDateTime.now());
+
+        assertEquals(1, household.getHouseholdMembers().size());
+
+        household.removeMember(event.getMemberId());
+
+        assertEquals(0, household.getHouseholdMembers().size());
     }
 
     @Test
@@ -104,5 +150,51 @@ public class DomainTests {
         assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTaggingTime());
         assertEquals("user1", event.getUserId());
         assertEquals("household1", event.getHouseholdId());
+    }
+
+    @Test
+    public void memberAddedEventTest() {
+        MemberAddedEvent event = new MemberAddedEvent("event1", "member1", "name", "household1", LocalDateTime.now());
+        event.setEventId("event2");
+        event.setName("name");
+        event.setTimestamp(LocalDateTime.of(2000,1,1, 1, 1, 1));
+        event.setMemberId("user1");
+        event.setHouseholdId("household1");
+
+        assertEquals("event2", event.getEventId());
+        assertEquals("name", event.getName());
+        assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTimestamp());
+        assertEquals("user1", event.getMemberId());
+        assertEquals("household1", event.getHouseholdId());
+    }
+
+    @Test
+    public void memberRemovedEventTest() {
+        MemberRemovedEvent event = new MemberRemovedEvent("event1", "member1", "household1", LocalDateTime.now());
+        event.setEventId("event2");
+        event.setTimestamp(LocalDateTime.of(2000,1,1, 1, 1, 1));
+        event.setMemberId("user1");
+        event.setHouseholdId("household1");
+
+        assertEquals("event2", event.getEventId());
+        assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTimestamp());
+        assertEquals("user1", event.getMemberId());
+        assertEquals("household1", event.getHouseholdId());
+    }
+
+    @Test
+    public void householdCreatedEventTest() {
+        HouseholdCreatedEvent event = new HouseholdCreatedEvent("event1", "member1", "name", "householdId", LocalDateTime.now());
+        event.setEventId("event2");
+        event.setTimestamp(LocalDateTime.of(2000,1,1, 1, 1, 1));
+        event.setMemberId("user1");
+        event.setName("namenew");
+        event.setHouseholdId("household1");
+
+        assertEquals("event2", event.getEventId());
+        assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTimestamp());
+        assertEquals("user1", event.getMemberId());
+        assertEquals("household1", event.getHouseholdId());
+        assertEquals("namenew", event.getName());
     }
 }

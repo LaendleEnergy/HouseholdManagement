@@ -70,7 +70,7 @@ public class DTOTests {
         HouseholdMember householdMember = new HouseholdMember("1", "test@email.de", 0, household);
         HouseholdMemberDTO householdMemberDTO = HouseholdMemberDTO.create(householdMember);
 
-        assertEquals(householdMember.getEmailAddress(), householdMemberDTO.getEmailAddress());
+        assertEquals(householdMember.getName(), householdMemberDTO.getEmailAddress());
         assertEquals(householdMember.getNumberOfCreatedTags(), householdMemberDTO.getNumberOfCreatedTags());
     }
 

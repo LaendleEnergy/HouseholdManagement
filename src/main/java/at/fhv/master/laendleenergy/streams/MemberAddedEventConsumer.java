@@ -2,7 +2,7 @@ package at.fhv.master.laendleenergy.streams;
 
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
-import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
+import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
 import io.quarkus.scheduler.Scheduled;
@@ -19,18 +19,18 @@ import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
-public class TaggingCreatedEventConsumer {
+public class MemberAddedEventConsumer {
 
     @Inject
     HouseholdRepository householdRepository;
     @ConfigProperty(name = "redis-host")  private String redisHost;
     @ConfigProperty(name = "redis-port")  private String redisPort;
-    @ConfigProperty(name = "redis-tagging-created-key")  private String KEY;
-    @ConfigProperty(name = "redis-datacollector-group")  private String GROUP_NAME;
+    @ConfigProperty(name = "redis-member-added-key")  private String KEY;
+    @ConfigProperty(name = "redis-accountmanagement-group")  private String GROUP_NAME;
 
     RedisCommands<String, String> syncCommands;
 
-    public TaggingCreatedEventConsumer(){
+    public MemberAddedEventConsumer(){
 
     }
 
@@ -43,7 +43,7 @@ public class TaggingCreatedEventConsumer {
         initialize();
     }
 
-    private void initialize() {
+    protected void initialize() {
         if (syncCommands.exists(KEY) == 0) {
             Map<String, String> messageBody = new HashMap<>();
             messageBody.put( "testcreatekey", "testcreatevalue" );
@@ -74,22 +74,19 @@ public class TaggingCreatedEventConsumer {
 
         if (!messages.isEmpty()) {
             for (StreamMessage<String, String> m : messages) {
-                TaggingCreatedEvent event = TaggingCreatedEvent.fromStreamMessage(m);
-                increaseNumberOfTagsForMember(event.getHouseholdId(), event.getUserId());
+                MemberAddedEvent event = MemberAddedEvent.fromStreamMessage(m);
+                handleMemberAddedEvent(event);
                 // Confirm that the message has been processed using XACK
                 syncCommands.xack(KEY, GROUP_NAME, m.getId());
             }
         }
     }
 
-    public void increaseNumberOfTagsForMember(String householdId, String memberId) throws HouseholdNotFoundException {
-        Household household = householdRepository.getHouseholdById(householdId);
+    public void handleMemberAddedEvent(MemberAddedEvent event) throws HouseholdNotFoundException {
+        Household household = householdRepository.getHouseholdById(event.getHouseholdId());
+        HouseholdMember member = HouseholdMember.create(event.getMemberId(), event.getName(), household);
+        household.addMemberToHousehold(member);
 
-        for (HouseholdMember member : household.getHouseholdMembers()) {
-            if (member.getId().equals(memberId)) {
-                member.increaseNumberOfCreatedTags();
-                return;
-            }
-        }
+        householdRepository.updateHousehold(household);
     }
 }

@@ -34,11 +34,10 @@ public class EnergySavingRepositoryTests {
                 new LinkedList<>());
 
         Mockito.when(householdRepository.getHouseholdById(householdId)).thenReturn(household);
-        Mockito.when(householdRepository.createHouseholdIfNotExists(householdId)).thenReturn(household);
     }
 
     @Test
-    public void getCurrentSavingTargetTest() {
+    public void getCurrentSavingTargetTest() throws HouseholdNotFoundException {
         EnergySavingTarget savingTarget = repository.getCurrentSavingTarget(householdId);
         assertEquals(household.getSavingTarget().getPercentage(), savingTarget.getPercentage());
         assertEquals(household.getSavingTarget().getTimeframe(), savingTarget.getTimeframe());
@@ -46,7 +45,7 @@ public class EnergySavingRepositoryTests {
     }
 
     @Test
-    public void updateSavingTargetTest() {
+    public void updateSavingTargetTest() throws HouseholdNotFoundException {
         EnergySavingTarget savingTarget = household.getSavingTarget();
         savingTarget.setPercentage(20);
         savingTarget.setTimeframe("Vorjahr");
@@ -57,7 +56,7 @@ public class EnergySavingRepositoryTests {
     }
 
     @Test
-    public void getCurrentIncentiveTest() {
+    public void getCurrentIncentiveTest() throws HouseholdNotFoundException {
         Incentive incentive = repository.getCurrentIncentive(householdId);
         assertEquals(household.getIncentive().getDescription(), incentive.getDescription());
         assertEquals(household.getIncentive().getEndDate(), incentive.getEndDate());
@@ -65,7 +64,7 @@ public class EnergySavingRepositoryTests {
     }
 
     @Test
-    public void updateIncentiveTest() {
+    public void updateIncentiveTest() throws HouseholdNotFoundException {
         Incentive incentive = household.getIncentive();
         incentive.setDescription("new description");
         incentive.setEndDate(LocalDate.of(2000, 10, 1));

@@ -5,6 +5,8 @@ import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,18 +15,6 @@ public class HouseholdRepositoryImpl implements HouseholdRepository {
 
     @Inject
     EntityManager entityManager;
-
-    @Override
-    public Household createHouseholdIfNotExists(String householdId) {
-        Household household = entityManager.find(Household.class, householdId);
-
-        if (household == null) {
-            Household newHousehold = new Household(householdId, new Incentive("Noch keine Belohnung festgelegt.", null), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
-            addHousehold(newHousehold);
-            return newHousehold;
-        }
-        return household;
-    }
 
     @Override
     public void addHousehold(Household household) {
