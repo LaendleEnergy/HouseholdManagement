@@ -1,36 +1,39 @@
-package at.fhv.master.laendleenergy.streams;
+package at.fhv.master.laendleenergy.application.streams.consumer;
 
+import at.fhv.master.laendleenergy.application.streams.EventHandler;
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
 import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
+import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
+import io.lettuce.core.*;
+import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.api.sync.RedisCommands;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import io.lettuce.core.*;
-import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.sync.RedisCommands;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @ApplicationScoped
-public class MemberAddedEventConsumer {
+public class MemberRemovedEventConsumer {
 
     @Inject
-    HouseholdRepository householdRepository;
+    EventHandler eventHandler;
     @ConfigProperty(name = "redis-host")  private String redisHost;
     @ConfigProperty(name = "redis-port")  private String redisPort;
-    @ConfigProperty(name = "redis-member-added-key")  private String KEY;
+    @ConfigProperty(name = "redis-member-removed-key")  private String KEY;
     @ConfigProperty(name = "redis-accountmanagement-group")  private String GROUP_NAME;
 
     RedisCommands<String, String> syncCommands;
 
-    public MemberAddedEventConsumer(){
+    public MemberRemovedEventConsumer(){
 
     }
 
@@ -74,19 +77,11 @@ public class MemberAddedEventConsumer {
 
         if (!messages.isEmpty()) {
             for (StreamMessage<String, String> m : messages) {
-                MemberAddedEvent event = MemberAddedEvent.fromStreamMessage(m);
-                handleMemberAddedEvent(event);
+                MemberRemovedEvent event = MemberRemovedEvent.fromStreamMessage(m);
+                eventHandler.handleMemberRemovedEvent(event);
                 // Confirm that the message has been processed using XACK
                 syncCommands.xack(KEY, GROUP_NAME, m.getId());
             }
         }
-    }
-
-    public void handleMemberAddedEvent(MemberAddedEvent event) throws HouseholdNotFoundException {
-        Household household = householdRepository.getHouseholdById(event.getHouseholdId());
-        HouseholdMember member = HouseholdMember.create(event.getMemberId(), event.getName(), household);
-        household.addMemberToHousehold(member);
-
-        householdRepository.updateHousehold(household);
     }
 }

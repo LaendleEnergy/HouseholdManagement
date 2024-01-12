@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-public class MemberRemovedEvent {
+public class MemberRemovedEvent extends Event {
     private String eventId;
     private String memberId;
     private String householdId;
@@ -15,42 +15,7 @@ public class MemberRemovedEvent {
     public MemberRemovedEvent() {}
 
     public MemberRemovedEvent(String eventId, String memberId, String householdId, LocalDateTime timestamp) {
-        this.eventId = eventId;
-        this.memberId = memberId;
-        this.householdId = householdId;
-        this.timestamp = timestamp;
-    }
-
-    public String getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    public String getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(String memberId) {
-        this.memberId = memberId;
-    }
-
-    public String getHouseholdId() {
-        return householdId;
-    }
-
-    public void setHouseholdId(String householdId) {
-        this.householdId = householdId;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+        super(eventId, memberId, householdId, timestamp);
     }
 
     public static MemberRemovedEvent fromStreamMessage(StreamMessage<String, String> message) {

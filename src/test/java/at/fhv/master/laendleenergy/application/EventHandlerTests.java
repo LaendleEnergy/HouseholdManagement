@@ -1,45 +1,38 @@
-package at.fhv.master.laendleenergy.streams;
+package at.fhv.master.laendleenergy.application;
 
+import at.fhv.master.laendleenergy.application.streams.EventHandler;
 import at.fhv.master.laendleenergy.domain.EnergySavingTarget;
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
 import at.fhv.master.laendleenergy.domain.Incentive;
+import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
 import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
+import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.sync.RedisCommands;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 
 @QuarkusTest
 @TestTransaction
-public class MemberAddedEventConsumerTests {
-    /*@Inject
-    MemberAddedEventConsumer consumer;
+public class EventHandlerTests {
+
     @InjectMock
     HouseholdRepository householdRepository;
-
-    @ConfigProperty(name = "redis-host")  private String redisHost;
-    @ConfigProperty(name = "redis-port")  private String redisPort;
-    @ConfigProperty(name = "redis-member-added-key")  private String KEY;
+    @Inject
+    EventHandler eventHandler;
 
     static Household household;
     static final String householdId = "h1";
@@ -59,42 +52,50 @@ public class MemberAddedEventConsumerTests {
         members.add(new HouseholdMember("3", "testemail3@email.com", 1, household));
         household.setHouseholdMembers(members);
 
-        Mockito.when(householdRepository.getHouseholdById(anyString())).thenReturn(household);
+        Mockito.when(householdRepository.getHouseholdById(householdId)).thenReturn(household);
     }
+
     @Test
-    public void testConnection() throws HouseholdNotFoundException {
-        RedisClient redisClient = RedisClient.create("redis://" + redisHost + ":" + redisPort);
-        StatefulRedisConnection<String, String> connection = redisClient.connect();
+    public void handleHouseholdCreatedEvent() throws HouseholdNotFoundException {
+        String newHouseholdId = "newHouseholdId";
+        Mockito.when(householdRepository.getHouseholdById(newHouseholdId)).thenReturn(household);
 
-        try (connection) {
-            RedisCommands<String, String> syncCommands = connection.sync();
-            MemberAddedEvent event = new MemberAddedEvent("event1", memberId, "name", householdId, LocalDateTime.now());
+        HouseholdCreatedEvent event = new HouseholdCreatedEvent("event1", memberId, "name", newHouseholdId, LocalDateTime.of(1900,1,1,1,1));
+        eventHandler.handleHouseholdCreatedEvent(event);
 
-            Map<String, String> messageBody = new HashMap<>();
-            messageBody.put("eventId", event.getEventId());
-            messageBody.put("memberId", event.getMemberId());
-            messageBody.put("name", event.getName());
-            messageBody.put("householdId", event.getHouseholdId());
-            messageBody.put("timestamp", event.getTimestamp().toString());
-
-            syncCommands.xadd(KEY, messageBody);
-        } finally {
-            redisClient.shutdown();
-        }
-
-        consumer.consume();
+        Mockito.verify(householdRepository, times(1)).addHousehold(any());
     }
 
-    // ToDo: Fails when all tests are run
     @Test
     public void handleMemberAddedEvent() throws HouseholdNotFoundException {
         assertEquals(3, household.getHouseholdMembers().size());
-        MemberAddedEvent event = new MemberAddedEvent("event1", "member1", "name", householdId, LocalDateTime.of(1900,1,1,1,1));
 
-        consumer.handleMemberAddedEvent(event);
+        MemberAddedEvent event = new MemberAddedEvent("event1", "member1", "name", householdId, LocalDateTime.of(1900,1,1,1,1));
+        eventHandler.handleMemberAddedEvent(event);
 
         assertEquals(4, household.getHouseholdMembers().size());
 
         Mockito.verify(householdRepository, times(1)).updateHousehold(any());
-    }*/
+    }
+
+    @Test
+    public void handleMemberRemovedEvent() throws HouseholdNotFoundException {
+        assertEquals(3, household.getHouseholdMembers().size());
+
+        MemberRemovedEvent event = new MemberRemovedEvent("event1", memberId, householdId, LocalDateTime.now());
+        eventHandler.handleMemberRemovedEvent(event);
+
+        Mockito.verify(householdRepository, times(1)).updateHousehold(any());
+        assertEquals(2, household.getHouseholdMembers().size());
+    }
+
+    @Test
+    public void testHandleTaggingCreatedEvent() throws HouseholdNotFoundException {
+        HouseholdMember member = household.getHouseholdMembers().get(0);
+
+        assertEquals(3, member.getNumberOfCreatedTags());
+        eventHandler.handleTaggingCreatedEvent(householdId, member.getId());
+
+        assertEquals(4, member.getNumberOfCreatedTags());
+    }
 }

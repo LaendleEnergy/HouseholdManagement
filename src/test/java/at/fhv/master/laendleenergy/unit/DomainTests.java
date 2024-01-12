@@ -5,12 +5,17 @@ import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
 import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
 import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
 import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
+import io.lettuce.core.StreamMessage;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
@@ -141,15 +146,36 @@ public class DomainTests {
         TaggingCreatedEvent event = new TaggingCreatedEvent("event1", LocalDateTime.now(), "1", "D1", "h1");
         event.setEventId("event2");
         event.setDeviceId("d2");
-        event.setTaggingTime(LocalDateTime.of(2000,1,1, 1, 1, 1));
-        event.setUserId("user1");
+        event.setTimestamp(LocalDateTime.of(2000,1,1, 1, 1, 1));
+        event.setMemberId("user1");
         event.setHouseholdId("household1");
 
         assertEquals("event2", event.getEventId());
         assertEquals("d2", event.getDeviceId());
-        assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTaggingTime());
-        assertEquals("user1", event.getUserId());
+        assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTimestamp());
+        assertEquals("user1", event.getMemberId());
         assertEquals("household1", event.getHouseholdId());
+    }
+
+    @Test
+    public void testTaggingCreatedEventFromStreamMessage() {
+        TaggingCreatedEvent expected = new TaggingCreatedEvent("event1", LocalDateTime.of(2000,1,1,1,1,1), "member1", "device1", "household1");
+
+        Map<String, String> messageBody = new HashMap<>();
+        messageBody.put("eventId", expected.getEventId());
+        messageBody.put("userId", expected.getMemberId());
+        messageBody.put("deviceId", expected.getDeviceId());
+        messageBody.put("householdId", expected.getHouseholdId());
+        messageBody.put("taggingTime", expected.getTimestamp().toString());
+
+        StreamMessage<String, String> message = new StreamMessage<>("", "id1", messageBody);
+
+        TaggingCreatedEvent actual = TaggingCreatedEvent.fromStreamMessage(message);
+        assertEquals(expected.getHouseholdId(), actual.getHouseholdId());
+        assertEquals(expected.getMemberId(), actual.getMemberId());
+        assertEquals(expected.getEventId(), actual.getEventId());
+        assertEquals(expected.getTimestamp(), actual.getTimestamp());
+        assertEquals(expected.getDeviceId(), actual.getDeviceId());
     }
 
     @Test
@@ -169,6 +195,27 @@ public class DomainTests {
     }
 
     @Test
+    public void testMemberAddedEventFromStreamMessage() {
+        MemberAddedEvent expected = new MemberAddedEvent("event1", "member1", "name", "household1", LocalDateTime.of(2000,1,1,1,1,1));
+
+        Map<String, String> messageBody = new HashMap<>();
+        messageBody.put("eventId", expected.getEventId());
+        messageBody.put("memberId", expected.getMemberId());
+        messageBody.put("name", expected.getName());
+        messageBody.put("householdId", expected.getHouseholdId());
+        messageBody.put("timestamp", expected.getTimestamp().toString());
+
+        StreamMessage<String, String> message = new StreamMessage<>("", "id1", messageBody);
+
+        MemberAddedEvent actual = MemberAddedEvent.fromStreamMessage(message);
+        assertEquals(expected.getHouseholdId(), actual.getHouseholdId());
+        assertEquals(expected.getMemberId(), actual.getMemberId());
+        assertEquals(expected.getEventId(), actual.getEventId());
+        assertEquals(expected.getTimestamp(), actual.getTimestamp());
+        assertEquals(expected.getName(), actual.getName());
+    }
+
+    @Test
     public void memberRemovedEventTest() {
         MemberRemovedEvent event = new MemberRemovedEvent("event1", "member1", "household1", LocalDateTime.now());
         event.setEventId("event2");
@@ -180,6 +227,25 @@ public class DomainTests {
         assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTimestamp());
         assertEquals("user1", event.getMemberId());
         assertEquals("household1", event.getHouseholdId());
+    }
+
+    @Test
+    public void testMemberRemovedEventFromStreamMessage() {
+        MemberRemovedEvent expected = new MemberRemovedEvent("event1", "member1", "household1", LocalDateTime.of(2000,1,1,1,1));
+
+        Map<String, String> messageBody = new HashMap<>();
+        messageBody.put("eventId", expected.getEventId());
+        messageBody.put("memberId", expected.getMemberId());
+        messageBody.put("householdId", expected.getHouseholdId());
+        messageBody.put("timestamp", expected.getTimestamp().toString());
+
+        StreamMessage<String, String> message = new StreamMessage<>("", "id1", messageBody);
+
+        MemberRemovedEvent actual = MemberRemovedEvent.fromStreamMessage(message);
+        assertEquals(expected.getHouseholdId(), actual.getHouseholdId());
+        assertEquals(expected.getMemberId(), actual.getMemberId());
+        assertEquals(expected.getEventId(), actual.getEventId());
+        assertEquals(expected.getTimestamp(), actual.getTimestamp());
     }
 
     @Test
@@ -196,5 +262,26 @@ public class DomainTests {
         assertEquals("user1", event.getMemberId());
         assertEquals("household1", event.getHouseholdId());
         assertEquals("namenew", event.getName());
+    }
+
+    @Test
+    public void testHouseholdCreatedEventFromStreamMessage() {
+        HouseholdCreatedEvent expected = new HouseholdCreatedEvent("event1", "member1", "name", "household1", LocalDateTime.of(2000,1,1,1,1,1));
+
+        Map<String, String> messageBody = new HashMap<>();
+        messageBody.put("eventId", expected.getEventId());
+        messageBody.put("memberId", expected.getMemberId());
+        messageBody.put("name", expected.getName());
+        messageBody.put("householdId", expected.getHouseholdId());
+        messageBody.put("timestamp", expected.getTimestamp().toString());
+
+        StreamMessage<String, String> message = new StreamMessage<>("", "id1", messageBody);
+
+        HouseholdCreatedEvent actual = HouseholdCreatedEvent.fromStreamMessage(message);
+        assertEquals(expected.getHouseholdId(), actual.getHouseholdId());
+        assertEquals(expected.getMemberId(), actual.getMemberId());
+        assertEquals(expected.getEventId(), actual.getEventId());
+        assertEquals(expected.getTimestamp(), actual.getTimestamp());
+        assertEquals(expected.getName(), actual.getName());
     }
 }

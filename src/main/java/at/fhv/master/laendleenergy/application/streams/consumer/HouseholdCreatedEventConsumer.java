@@ -1,5 +1,6 @@
-package at.fhv.master.laendleenergy.streams;
+package at.fhv.master.laendleenergy.application.streams.consumer;
 
+import at.fhv.master.laendleenergy.application.streams.EventHandler;
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
 import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
@@ -24,7 +25,7 @@ import java.util.Map;
 public class HouseholdCreatedEventConsumer {
 
     @Inject
-    HouseholdRepository householdRepository;
+    EventHandler eventHandler;
     @ConfigProperty(name = "redis-host")  private String redisHost;
     @ConfigProperty(name = "redis-port")  private String redisPort;
     @ConfigProperty(name = "redis-household-created-key")  private String KEY;
@@ -77,18 +78,12 @@ public class HouseholdCreatedEventConsumer {
         if (!messages.isEmpty()) {
             for (StreamMessage<String, String> m : messages) {
                 HouseholdCreatedEvent event = HouseholdCreatedEvent.fromStreamMessage(m);
-                handleHouseholdCreatedEvent(event);
+                eventHandler.handleHouseholdCreatedEvent(event);
                 // Confirm that the message has been processed using XACK
                 syncCommands.xack(KEY, GROUP_NAME, m.getId());
             }
         }
     }
 
-    public void handleHouseholdCreatedEvent(HouseholdCreatedEvent event) {
-        Household household = Household.create(event.getHouseholdId());
-        HouseholdMember member = HouseholdMember.create(event.getMemberId(), event.getName(), household);
-        household.addMemberToHousehold(member);
 
-        householdRepository.addHousehold(household);
-    }
 }

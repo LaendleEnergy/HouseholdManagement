@@ -1,51 +1,20 @@
 package at.fhv.master.laendleenergy.domain.events;
 
 import io.lettuce.core.StreamMessage;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-public class TaggingCreatedEvent {
-    private String eventId;
-    private LocalDateTime taggingTime;
-    private String userId;
+public class TaggingCreatedEvent extends Event {
     private String deviceId;
-    private String householdId;
 
     public TaggingCreatedEvent() {}
 
-    public TaggingCreatedEvent(String eventId, LocalDateTime taggingTime, String userId, String deviceId, String householdId) {
-        this.eventId = eventId;
-        this.taggingTime = taggingTime;
-        this.userId = userId;
+    public TaggingCreatedEvent(String eventId, LocalDateTime timestamp, String memberId, String deviceId, String householdId) {
+        super(eventId, memberId, householdId, timestamp);
         this.deviceId = deviceId;
-        this.householdId = householdId;
     }
 
-    public String getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    public LocalDateTime getTaggingTime() {
-        return taggingTime;
-    }
-
-    public void setTaggingTime(LocalDateTime taggingTime) {
-        this.taggingTime = taggingTime;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getDeviceId() {
         return deviceId;
@@ -53,14 +22,6 @@ public class TaggingCreatedEvent {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
-    }
-
-    public String getHouseholdId() {
-        return householdId;
-    }
-
-    public void setHouseholdId(String householdId) {
-        this.householdId = householdId;
     }
 
     public static TaggingCreatedEvent fromStreamMessage(StreamMessage<String, String> message) {
@@ -71,9 +32,9 @@ public class TaggingCreatedEvent {
         String deviceId = body.get("deviceId");
         String householdId = body.get("householdId");
 
-        String taggingTimeString = body.get("taggingTime");
-        LocalDateTime taggingTime = LocalDateTime.parse(taggingTimeString, DateTimeFormatter.ISO_DATE_TIME);
+        String timestampString = body.get("taggingTime");
+        LocalDateTime timestamp = LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_DATE_TIME);
 
-        return new TaggingCreatedEvent(eventId, taggingTime, userId, deviceId, householdId);
+        return new TaggingCreatedEvent(eventId, timestamp, userId, deviceId, householdId);
     }
 }

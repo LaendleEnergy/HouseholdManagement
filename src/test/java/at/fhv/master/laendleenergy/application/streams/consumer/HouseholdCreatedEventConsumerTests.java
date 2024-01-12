@@ -1,4 +1,4 @@
-package at.fhv.master.laendleenergy.streams;
+package at.fhv.master.laendleenergy.application.streams.consumer;
 
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.times;
 @QuarkusTest
 @TestTransaction
 public class HouseholdCreatedEventConsumerTests {
-    /*@Inject
+    @Inject
     HouseholdCreatedEventConsumer consumer;
     @InjectMock
     HouseholdRepository householdRepository;
@@ -61,21 +61,12 @@ public class HouseholdCreatedEventConsumerTests {
             messageBody.put("timestamp", event.getTimestamp().toString());
 
             syncCommands.xadd(KEY, messageBody);
+
+            System.out.println(messageBody);
         } finally {
             redisClient.shutdown();
         }
 
         consumer.consume();
     }
-
-    // ToDo: Fails when all tests are run
-    @Test
-    public void handleHouseholdCreatedEvent() {
-        assertNull(household);
-
-        HouseholdCreatedEvent event = new HouseholdCreatedEvent("event1", memberId, "name", householdId, LocalDateTime.of(1900,1,1,1,1));
-        consumer.handleHouseholdCreatedEvent(event);
-
-        Mockito.verify(householdRepository, times(1)).addHousehold(any());
-    }*/
 }

@@ -1,4 +1,4 @@
-package at.fhv.master.laendleenergy.streams;
+package at.fhv.master.laendleenergy.application.streams.consumer;
 
 import at.fhv.master.laendleenergy.domain.EnergySavingTarget;
 import at.fhv.master.laendleenergy.domain.Household;
@@ -24,7 +24,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 
 @QuarkusTest
 @TestTransaction
@@ -81,16 +85,5 @@ public class MemberRemovedEventConsumerTests {
         consumer.consume();
     }
 
-    // ToDo: Fails when all tests are run
-    @Test
-    public void handleMemberRemovedEvent() throws HouseholdNotFoundException {
-        assertEquals(3, household.getHouseholdMembers().size());
-        System.out.println(household.getId());
-        MemberRemovedEvent event = new MemberRemovedEvent("event1", memberId, householdId, LocalDateTime.now());
-
-        consumer.handleMemberRemovedEvent(event);
-
-        Mockito.verify(householdRepository, times(1)).updateHousehold(any());
-        assertEquals(2, household.getHouseholdMembers().size());
-    }*/
+*/
 }
