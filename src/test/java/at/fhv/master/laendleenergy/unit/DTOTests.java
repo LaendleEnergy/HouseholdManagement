@@ -58,10 +58,10 @@ public class DTOTests {
     @Test
     public void householdMemberDTOTest() {
         HouseholdMemberDTO householdMember = new HouseholdMemberDTO("test@email.com", 0);
-        householdMember.setEmailAddress("test@email.com.new");
+        householdMember.setName("test@email.com.new");
         householdMember.setNumberOfCreatedTags(1);
 
-        assertEquals("test@email.com.new", householdMember.getEmailAddress());
+        assertEquals("test@email.com.new", householdMember.getName());
         assertEquals(1, householdMember.getNumberOfCreatedTags());
     }
 
@@ -70,7 +70,7 @@ public class DTOTests {
         HouseholdMember householdMember = new HouseholdMember("1", "test@email.de", 0, household);
         HouseholdMemberDTO householdMemberDTO = HouseholdMemberDTO.create(householdMember);
 
-        assertEquals(householdMember.getName(), householdMemberDTO.getEmailAddress());
+        assertEquals(householdMember.getName(), householdMemberDTO.getName());
         assertEquals(householdMember.getNumberOfCreatedTags(), householdMemberDTO.getNumberOfCreatedTags());
     }
 

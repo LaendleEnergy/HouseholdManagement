@@ -54,8 +54,8 @@ public class LeaderboardServiceTests {
         expectedLeaderboard.add(HouseholdMemberDTO.create(household.getHouseholdMembers().get(0)));
         expectedLeaderboard.add(HouseholdMemberDTO.create(household.getHouseholdMembers().get(1)));
 
-        assertEquals(expectedLeaderboard.get(0).getEmailAddress(), members.get(0).getEmailAddress());
-        assertEquals(expectedLeaderboard.get(1).getEmailAddress(), members.get(1).getEmailAddress());
-        assertEquals(expectedLeaderboard.get(2).getEmailAddress(), members.get(2).getEmailAddress());
+        assertEquals(expectedLeaderboard.get(0).getName(), members.get(0).getName());
+        assertEquals(expectedLeaderboard.get(1).getName(), members.get(1).getName());
+        assertEquals(expectedLeaderboard.get(2).getName(), members.get(2).getName());
     }
 }

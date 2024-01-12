@@ -1,6 +1,7 @@
 package at.fhv.master.laendleenergy.view;
 
 import at.fhv.master.laendleenergy.application.LeaderboardService;
+import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -28,6 +29,8 @@ public class LeaderboardController {
             String householdId = jwt.getClaim("householdId");
             try {
                 return Response.ok(leaderboardService.getLeaderboardOfHousehold(householdId), MediaType.APPLICATION_JSON).build();
+            } catch (HouseholdNotFoundException e) {
+                return Response.status(Response.Status.NOT_FOUND).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }

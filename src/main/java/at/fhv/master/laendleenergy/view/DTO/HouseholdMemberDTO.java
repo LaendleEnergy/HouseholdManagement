@@ -3,14 +3,14 @@ package at.fhv.master.laendleenergy.view.DTO;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
 
 public class HouseholdMemberDTO {
-    private String emailAddress;
+    private String name;
     private int numberOfCreatedTags;
 
     public HouseholdMemberDTO() {
     }
 
-    public HouseholdMemberDTO(String emailAddress, int numberOfCreatedTags) {
-        this.emailAddress = emailAddress;
+    public HouseholdMemberDTO(String name, int numberOfCreatedTags) {
+        this.name = name;
         this.numberOfCreatedTags = numberOfCreatedTags;
     }
 
@@ -18,12 +18,12 @@ public class HouseholdMemberDTO {
         return new HouseholdMemberDTO(householdMember.getName(), householdMember.getNumberOfCreatedTags());
     }
 
-    public String getEmailAddress() {
-        return emailAddress;
+    public String getName() {
+        return name;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getNumberOfCreatedTags() {
