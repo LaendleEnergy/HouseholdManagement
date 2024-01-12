@@ -1,30 +1,28 @@
 package at.fhv.master.laendleenergy.application.streams.consumer;
 
 import at.fhv.master.laendleenergy.application.streams.EventHandler;
-import at.fhv.master.laendleenergy.domain.Household;
-import at.fhv.master.laendleenergy.domain.HouseholdMember;
 import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
+import io.lettuce.core.Consumer;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.StreamMessage;
+import io.lettuce.core.XReadArgs;
+import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.api.sync.RedisCommands;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import io.lettuce.core.*;
-import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.sync.RedisCommands;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.util.List;
+
 @ApplicationScoped
-public class TaggingCreatedEventConsumer {
+public class TaggingCreatedEventConsumer extends EventConsumer {
 
     @Inject
     EventHandler eventHandler;
-    @ConfigProperty(name = "redis-host")  private String redisHost;
-    @ConfigProperty(name = "redis-port")  private String redisPort;
     @ConfigProperty(name = "redis-tagging-created-key")  private String KEY;
     @ConfigProperty(name = "redis-datacollector-group")  private String GROUP_NAME;
 
@@ -36,32 +34,11 @@ public class TaggingCreatedEventConsumer {
 
     @PostConstruct
     public void connect() {
-        RedisClient redisClient = RedisClient.create("redis://" + redisHost + ":" + redisPort);
+        RedisClient redisClient = RedisClient.create("redis://" + REDIS_HOST + ":" + REDIS_PORT);
         StatefulRedisConnection<String, String> connection = redisClient.connect();
         syncCommands = connection.sync();
 
-        initialize();
-    }
-
-    private void initialize() {
-        if (syncCommands.exists(KEY) == 0) {
-            Map<String, String> messageBody = new HashMap<>();
-            messageBody.put( "testcreatekey", "testcreatevalue" );
-            String id = syncCommands.xadd(KEY, messageBody);
-            syncCommands.xdel(KEY, id);
-        }
-
-        List<Object> groups = syncCommands.xinfoGroups(KEY);
-        boolean groupAlreadyExists = false;
-        for (Object obj : groups) {
-            //object returned by redis is a list of parameters that need to be casted
-            if (((List<String>)obj).contains(GROUP_NAME)) {
-                groupAlreadyExists = true;
-            }
-        }
-        if (!groupAlreadyExists) {
-            syncCommands.xgroupCreate(XReadArgs.StreamOffset.latest(KEY), GROUP_NAME, new XGroupCreateArgs());
-        }
+        initialize(syncCommands, KEY, GROUP_NAME);
     }
 
     @Scheduled(every="5s")
