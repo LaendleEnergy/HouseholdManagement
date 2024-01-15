@@ -51,6 +51,7 @@ public class MemberAddedEventConsumer extends EventConsumer {
 
         if (!messages.isEmpty()) {
             for (StreamMessage<String, String> m : messages) {
+                System.out.println(m);
                 MemberAddedEvent event = MemberAddedEvent.fromStreamMessage(m);
                 eventHandler.handleMemberAddedEvent(event);
                 // Confirm that the message has been processed using XACK
