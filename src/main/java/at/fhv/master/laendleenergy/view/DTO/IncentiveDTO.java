@@ -16,10 +16,8 @@ public class IncentiveDTO {
         this.id = id;
     }
 
-    public static Incentive create(IncentiveDTO incentiveDTO) {
-        return new Incentive(incentiveDTO.getId(),
-                incentiveDTO.getDescription(),
-                LocalDate.parse(incentiveDTO.getEndDate()));
+    public Incentive toIncentive() {
+        return new Incentive(this.getId(), this.getDescription(), LocalDate.parse(this.getEndDate()));
     }
 
     public static IncentiveDTO create(Incentive incentive) {

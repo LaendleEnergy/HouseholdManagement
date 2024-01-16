@@ -17,7 +17,7 @@ public class EnergySavingServiceImpl implements EnergySavingService {
     @Override
     @Transactional
     public void updateSavingTarget(String householdId, SavingTargetDTO savingTargetDTO) throws HouseholdNotFoundException {
-        energySavingRepository.updateSavingTarget(householdId, SavingTargetDTO.create(savingTargetDTO));
+        energySavingRepository.updateSavingTarget(householdId, savingTargetDTO.toEnergySavingTarget());
     }
 
     @Override
@@ -29,7 +29,7 @@ public class EnergySavingServiceImpl implements EnergySavingService {
     @Override
     @Transactional
     public void updateIncentive(String householdId, IncentiveDTO incentiveDTO) throws HouseholdNotFoundException {
-        energySavingRepository.updateIncentive(householdId, IncentiveDTO.create(incentiveDTO));
+        energySavingRepository.updateIncentive(householdId, incentiveDTO.toIncentive());
     }
 
     @Override

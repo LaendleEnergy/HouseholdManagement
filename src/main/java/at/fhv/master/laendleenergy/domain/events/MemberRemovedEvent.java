@@ -17,17 +17,4 @@ public class MemberRemovedEvent extends Event {
     public MemberRemovedEvent(String eventId, String memberId, String householdId, LocalDateTime timestamp) {
         super(eventId, memberId, householdId, timestamp);
     }
-
-    public static MemberRemovedEvent fromStreamMessage(StreamMessage<String, String> message) {
-        Map<String, String> body = message.getBody();
-
-        String eventId = body.get("eventId");
-        String memberId = body.get("memberId");
-        String householdId = body.get("householdId");
-
-        String timestampString = body.get("timestamp");
-        LocalDateTime timestamp = LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_DATE_TIME);
-
-        return new MemberRemovedEvent(eventId, memberId, householdId, timestamp);
-    }
 }

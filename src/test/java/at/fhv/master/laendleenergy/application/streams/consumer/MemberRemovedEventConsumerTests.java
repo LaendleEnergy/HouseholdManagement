@@ -8,6 +8,7 @@ import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.StreamMessage;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import io.quarkus.test.InjectMock;
@@ -24,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 @QuarkusTest
@@ -77,6 +80,25 @@ public class MemberRemovedEventConsumerTests {
         }
 
         consumer.consume();
+    }
+
+    @Test
+    public void testMemberRemovedEventFromStreamMessage() {
+        MemberRemovedEvent expected = new MemberRemovedEvent("event1", "member1", "household1", LocalDateTime.of(2000,1,1,1,1));
+
+        Map<String, String> messageBody = new HashMap<>();
+        messageBody.put("eventId", expected.getEventId());
+        messageBody.put("memberId", expected.getMemberId());
+        messageBody.put("householdId", expected.getHouseholdId());
+        messageBody.put("timestamp", expected.getTimestamp().toString());
+
+        StreamMessage<String, String> message = new StreamMessage<>("", "id1", messageBody);
+
+        MemberRemovedEvent actual = consumer.fromStreamMessage(message);
+        assertEquals(expected.getHouseholdId(), actual.getHouseholdId());
+        assertEquals(expected.getMemberId(), actual.getMemberId());
+        assertEquals(expected.getEventId(), actual.getEventId());
+        assertEquals(expected.getTimestamp(), actual.getTimestamp());
     }
 
 }

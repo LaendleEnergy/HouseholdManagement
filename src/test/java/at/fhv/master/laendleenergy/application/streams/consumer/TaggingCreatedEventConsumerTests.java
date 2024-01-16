@@ -8,6 +8,7 @@ import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.StreamMessage;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import io.quarkus.test.InjectMock;
@@ -24,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @QuarkusTest
@@ -77,5 +80,27 @@ public class TaggingCreatedEventConsumerTests {
         }
 
         consumer.consume();
+    }
+
+
+    @Test
+    public void testTaggingCreatedEventFromStreamMessage() {
+        TaggingCreatedEvent expected = new TaggingCreatedEvent("event1", LocalDateTime.of(2000,1,1,1,1,1), "member1", "device1", "household1");
+
+        Map<String, String> messageBody = new HashMap<>();
+        messageBody.put("eventId", expected.getEventId());
+        messageBody.put("userId", expected.getMemberId());
+        messageBody.put("deviceId", expected.getDeviceId());
+        messageBody.put("householdId", expected.getHouseholdId());
+        messageBody.put("taggingTime", expected.getTimestamp().toString());
+
+        StreamMessage<String, String> message = new StreamMessage<>("", "id1", messageBody);
+
+        TaggingCreatedEvent actual = consumer.fromStreamMessage(message);
+        assertEquals(expected.getHouseholdId(), actual.getHouseholdId());
+        assertEquals(expected.getMemberId(), actual.getMemberId());
+        assertEquals(expected.getEventId(), actual.getEventId());
+        assertEquals(expected.getTimestamp(), actual.getTimestamp());
+        assertEquals(expected.getDeviceId(), actual.getDeviceId());
     }
 }

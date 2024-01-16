@@ -15,10 +15,8 @@ public class SavingTargetDTO {
         this.timeframe = timeframe;
     }
 
-    public static EnergySavingTarget create(SavingTargetDTO savingTargetDTO) {
-        return new EnergySavingTarget(savingTargetDTO.getId(),
-                savingTargetDTO.getPercentage(),
-                savingTargetDTO.getTimeframe());
+    public EnergySavingTarget toEnergySavingTarget() {
+        return new EnergySavingTarget(this.getId(), this.getPercentage(), this.getTimeframe());
     }
 
     public static SavingTargetDTO create(EnergySavingTarget savingTarget) {

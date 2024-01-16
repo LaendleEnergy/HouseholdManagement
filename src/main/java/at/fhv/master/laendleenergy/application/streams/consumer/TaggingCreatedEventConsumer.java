@@ -16,7 +16,10 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class TaggingCreatedEventConsumer extends EventConsumer {
@@ -51,7 +54,7 @@ public class TaggingCreatedEventConsumer extends EventConsumer {
 
         if (!messages.isEmpty()) {
             for (StreamMessage<String, String> m : messages) {
-                TaggingCreatedEvent event = TaggingCreatedEvent.fromStreamMessage(m);
+                TaggingCreatedEvent event = fromStreamMessage(m);
                 eventHandler.handleTaggingCreatedEvent(event.getHouseholdId(), event.getMemberId());
                 // Confirm that the message has been processed using XACK
                 syncCommands.xack(KEY, GROUP_NAME, m.getId());
@@ -59,5 +62,17 @@ public class TaggingCreatedEventConsumer extends EventConsumer {
         }
     }
 
+    public TaggingCreatedEvent fromStreamMessage(StreamMessage<String, String> message) {
+        Map<String, String> body = message.getBody();
 
+        String eventId = body.get("eventId");
+        String userId = body.get("userId");
+        String deviceId = body.get("deviceId");
+        String householdId = body.get("householdId");
+
+        String timestampString = body.get("taggingTime");
+        LocalDateTime timestamp = LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_DATE_TIME);
+
+        return new TaggingCreatedEvent(eventId, timestamp, userId, deviceId, householdId);
+    }
 }
