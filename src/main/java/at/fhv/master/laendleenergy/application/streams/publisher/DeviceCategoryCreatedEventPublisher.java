@@ -11,7 +11,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class DeviceCategoryCreatedEventPublisher {
     @Inject
     RedisClient redisClient;
-    @ConfigProperty(name = "redis-household-created-key")  private String KEY;
+    @ConfigProperty(name = "redis-device-category-added-key")
+    private String KEY;
 
     public DeviceCategoryCreatedEventPublisher(){}
 

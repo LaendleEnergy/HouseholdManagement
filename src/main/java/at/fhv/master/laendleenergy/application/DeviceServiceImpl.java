@@ -52,13 +52,14 @@ public class DeviceServiceImpl implements DeviceService {
     public void addDevice(String name, String category) throws HouseholdNotFoundException, DeviceCategoryNotFound, JsonProcessingException {
         String memberId = jwt.getClaim("memberId");
         String householdId = jwt.getClaim("householdId");
+        String deviceId = jwt.getClaim("deviceId");
         Household household = householdRepository.getHouseholdById(householdId);
         DeviceCategory categoryLoaded = deviceRepository.getDeviceCategoryByName(category);
         Device device = new Device(categoryLoaded, name, household);
         deviceRepository.addDevice(device);
         deviceCreatedEventPublisher.publishMessage(
                 DeviceAddedEventSerializer.parse(
-                        new DeviceAddedEvent(memberId, device.getName(), householdId, categoryLoaded.getCategoryName())
+                        new DeviceAddedEvent(deviceId, memberId, device.getName(), householdId, categoryLoaded.getCategoryName())
                 )
         );
     }
@@ -76,11 +77,12 @@ public class DeviceServiceImpl implements DeviceService {
     public void addDeviceCategory(String name) throws JsonProcessingException {
         String memberId = jwt.getClaim("memberId");
         String householdId = jwt.getClaim("householdId");
+        String deviceId = jwt.getClaim("deviceId");
         DeviceCategory deviceCategory = new DeviceCategory(name);
         deviceRepository.addDeviceCategory(deviceCategory);
         deviceCategoryCreatedEventPublisher.publishMessage(
                 DeviceCategoryAddedEventSerializer.parse(new DeviceCategoryAddedEvent(
-                        memberId, deviceCategory.getCategoryName(), householdId
+                        deviceId, memberId, deviceCategory.getCategoryName(), householdId
                 ))
         );
     }
