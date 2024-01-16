@@ -23,18 +23,4 @@ public class MemberAddedEvent extends Event {
     public void setName(String name) {
         this.name = name;
     }
-
-    public static MemberAddedEvent fromStreamMessage(StreamMessage<String, String> message) {
-        Map<String, String> body = message.getBody();
-
-        String eventId = body.get("eventId");
-        String memberId = body.get("memberId");
-        String householdId = body.get("householdId");
-        String name = body.get("name");
-
-        String timestampString = body.get("timestamp");
-        LocalDateTime timestamp = LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_DATE_TIME);
-
-        return new MemberAddedEvent(eventId, memberId, name, householdId, timestamp);
-    }
 }

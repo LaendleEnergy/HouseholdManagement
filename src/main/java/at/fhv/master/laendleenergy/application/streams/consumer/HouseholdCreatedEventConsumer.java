@@ -11,7 +11,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class HouseholdCreatedEventConsumer extends EventConsumer {
@@ -46,12 +50,26 @@ public class HouseholdCreatedEventConsumer extends EventConsumer {
 
         if (!messages.isEmpty()) {
             for (StreamMessage<String, String> m : messages) {
-                HouseholdCreatedEvent event = HouseholdCreatedEvent.fromStreamMessage(m);
+                HouseholdCreatedEvent event = fromStreamMessage(m);
                 eventHandler.handleHouseholdCreatedEvent(event);
                 // Confirm that the message has been processed using XACK
                 syncCommands.xack(KEY, GROUP_NAME, m.getId());
             }
         }
+    }
+
+    public HouseholdCreatedEvent fromStreamMessage(StreamMessage<String, String> message) {
+        Map<String, String> body = message.getBody();
+
+        String eventId = body.get("eventId");
+        String memberId = body.get("memberId");
+        String name = body.get("name");
+        String householdId = body.get("householdId");
+
+        String timestampString = body.get("timestamp");
+        LocalDateTime timestamp = LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_DATE_TIME);
+
+        return new HouseholdCreatedEvent(eventId, memberId, name, householdId, timestamp);
     }
 
 

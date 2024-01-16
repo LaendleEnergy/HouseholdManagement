@@ -23,18 +23,4 @@ public class TaggingCreatedEvent extends Event {
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
-
-    public static TaggingCreatedEvent fromStreamMessage(StreamMessage<String, String> message) {
-        Map<String, String> body = message.getBody();
-
-        String eventId = body.get("eventId");
-        String userId = body.get("userId");
-        String deviceId = body.get("deviceId");
-        String householdId = body.get("householdId");
-
-        String timestampString = body.get("taggingTime");
-        LocalDateTime timestamp = LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_DATE_TIME);
-
-        return new TaggingCreatedEvent(eventId, timestamp, userId, deviceId, householdId);
-    }
 }

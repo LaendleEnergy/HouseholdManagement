@@ -38,7 +38,7 @@ public class DTOTests {
     @Test
     public void energySavingTargetDTOCreateTest() {
         SavingTargetDTO savingTargetDTO = new SavingTargetDTO("1", 10, "Vorjahr");
-        EnergySavingTarget energySavingTarget = SavingTargetDTO.create(savingTargetDTO);
+        EnergySavingTarget energySavingTarget = savingTargetDTO.toEnergySavingTarget();
 
         assertEquals(energySavingTarget.getId(), savingTargetDTO.getId());
         assertEquals(energySavingTarget.getPercentage(), savingTargetDTO.getPercentage());
@@ -89,7 +89,7 @@ public class DTOTests {
     @Test
     public void incentiveDTOCreateTest() {
         IncentiveDTO incentiveDTO = new IncentiveDTO("1", "test description", LocalDate.of(2020, 10, 10).toString());
-        Incentive incentive = IncentiveDTO.create(incentiveDTO);
+        Incentive incentive = incentiveDTO.toIncentive();
 
         assertEquals(incentiveDTO.getId(), incentive.getId());
         assertEquals(incentiveDTO.getDescription(), incentive.getDescription());

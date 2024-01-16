@@ -23,18 +23,4 @@ public class HouseholdCreatedEvent extends Event {
         this.name = name;
     }
 
-    public static HouseholdCreatedEvent fromStreamMessage(StreamMessage<String, String> message) {
-        Map<String, String> body = message.getBody();
-
-        String eventId = body.get("eventId");
-        String memberId = body.get("memberId");
-        String name = body.get("name");
-        String householdId = body.get("householdId");
-
-        String timestampString = body.get("timestamp");
-        LocalDateTime timestamp = LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_DATE_TIME);
-
-        return new HouseholdCreatedEvent(eventId, memberId, name, householdId, timestamp);
-    }
-
 }

@@ -16,7 +16,10 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class MemberRemovedEventConsumer extends EventConsumer {
@@ -51,11 +54,24 @@ public class MemberRemovedEventConsumer extends EventConsumer {
 
         if (!messages.isEmpty()) {
             for (StreamMessage<String, String> m : messages) {
-                MemberRemovedEvent event = MemberRemovedEvent.fromStreamMessage(m);
+                MemberRemovedEvent event = fromStreamMessage(m);
                 eventHandler.handleMemberRemovedEvent(event);
                 // Confirm that the message has been processed using XACK
                 syncCommands.xack(KEY, GROUP_NAME, m.getId());
             }
         }
+    }
+
+    public MemberRemovedEvent fromStreamMessage(StreamMessage<String, String> message) {
+        Map<String, String> body = message.getBody();
+
+        String eventId = body.get("eventId");
+        String memberId = body.get("memberId");
+        String householdId = body.get("householdId");
+
+        String timestampString = body.get("timestamp");
+        LocalDateTime timestamp = LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_DATE_TIME);
+
+        return new MemberRemovedEvent(eventId, memberId, householdId, timestamp);
     }
 }
