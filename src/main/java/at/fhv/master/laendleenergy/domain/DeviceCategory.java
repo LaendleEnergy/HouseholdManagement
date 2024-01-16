@@ -1,32 +1,42 @@
 package at.fhv.master.laendleenergy.domain;
 
-import java.util.HashMap;
-import java.util.Map;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-public enum DeviceCategory {
-    FRIDGE("Kühlschrank"),
-    HAIR_DRYER("Haarföhn"),
-    MICROWAVE("Mikrowelle");
+@Entity
+public class DeviceCategory {
 
-    private final String name;
 
-    private static final Map<String, DeviceCategory> lookup = new HashMap<String, DeviceCategory>();
+    @Id
+    @Column(name = "category_name")
+    private String categoryName;
 
-    static {
-        for (DeviceCategory c : DeviceCategory.values()) {
-            lookup.put(c.getName(), c);
-        }
+
+    public DeviceCategory(String name) {
+        this.categoryName = name;
     }
 
-    DeviceCategory(String name) {
-        this.name = name;
+    public DeviceCategory() {
+
     }
 
-    public String getName() {
-        return name;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public static DeviceCategory get(String name) {
-        return lookup.get(name);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DeviceCategory that = (DeviceCategory) o;
+
+        return categoryName.equals(that.categoryName);
+    }
+
+    @Override
+    public int hashCode() {
+        return categoryName.hashCode();
     }
 }

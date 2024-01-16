@@ -11,3 +11,6 @@ insert into household_member (id, name, numberOfCreatedTags, household_id) value
 insert into household_member (id, name, numberOfCreatedTags, household_id) values ('m2', 'Bob', '0', 'h2');
 insert into household_member (id, name, numberOfCreatedTags, household_id) values ('1', 'Alice', '0', 'h1');
 insert into household_member (id, name, numberOfCreatedTags, household_id) values ('2', 'Felix Lahnsteiner', '0', 'h2');
+
+INSERT INTO public.devicecategory (category_name) VALUES ('fridge');
+INSERT INTO public.devicecategory (category_name) VALUES ('microwave');

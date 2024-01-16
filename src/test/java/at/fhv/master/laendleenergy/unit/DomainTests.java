@@ -35,22 +35,15 @@ public class DomainTests {
 
     @Test
     public void deviceTest() {
-        Device device = new Device(DeviceCategory.FRIDGE, "Kühlschrank1", household);
-        device.setDeviceCategory(DeviceCategory.MICROWAVE);
+        Device device = new Device(new DeviceCategory("fridge"), "Kühlschrank1", household);
+        device.setDeviceCategory(new DeviceCategory("microwave"));
         device.setName("Kühlschrank2");
         Household newHousehold = new Household();
         device.setHousehold(newHousehold);
 
-        assertEquals(DeviceCategory.MICROWAVE, device.getDeviceCategory());
+        assertEquals(new DeviceCategory("microwave"), device.getDeviceCategory());
         assertEquals("Kühlschrank2", device.getName());
         assertEquals(newHousehold, device.getHousehold());
-    }
-
-    @Test
-    public void deviceCategoryTest() {
-        assertEquals(DeviceCategory.get("Haarföhn"), DeviceCategory.HAIR_DRYER);
-        assertEquals(DeviceCategory.get("Kühlschrank"), DeviceCategory.FRIDGE);
-        assertEquals(DeviceCategory.get("Mikrowelle"), DeviceCategory.MICROWAVE);
     }
 
     @Test
