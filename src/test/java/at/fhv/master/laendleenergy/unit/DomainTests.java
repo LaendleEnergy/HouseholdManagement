@@ -1,10 +1,7 @@
 package at.fhv.master.laendleenergy.unit;
 
 import at.fhv.master.laendleenergy.domain.*;
-import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
-import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
-import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
-import at.fhv.master.laendleenergy.domain.events.TaggingCreatedEvent;
+import at.fhv.master.laendleenergy.domain.events.*;
 import io.lettuce.core.StreamMessage;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,15 +32,23 @@ public class DomainTests {
 
     @Test
     public void deviceTest() {
+        DeviceCategory deviceCategory = new DeviceCategory("microwave");
         Device device = new Device(new DeviceCategory("fridge"), "Kühlschrank1", household);
-        device.setDeviceCategory(new DeviceCategory("microwave"));
+        device.setDeviceCategory(deviceCategory);
         device.setName("Kühlschrank2");
         Household newHousehold = new Household();
         device.setHousehold(newHousehold);
 
-        assertEquals(new DeviceCategory("microwave"), device.getDeviceCategory());
+        assertEquals(deviceCategory, device.getDeviceCategory());
         assertEquals("Kühlschrank2", device.getName());
         assertEquals(newHousehold, device.getHousehold());
+    }
+
+    @Test
+    public void deviceCategoryTest() {
+        String deviceCategoryName = "name";
+        DeviceCategory deviceCategory = new DeviceCategory(deviceCategoryName);
+        assertEquals(deviceCategoryName, deviceCategory.getCategoryName());
     }
 
     @Test
@@ -194,6 +199,34 @@ public class DomainTests {
         assertEquals("user1", event.getMemberId());
         assertEquals("household1", event.getHouseholdId());
         assertEquals("namenew", event.getName());
+    }
+
+    @Test
+    public void deviceAddedEventTest() {
+        DeviceAddedEvent event = new DeviceAddedEvent("d1", "m1", "name1", "h1", "c1");
+        event.setDeviceName("name2");
+        event.setDeviceCategoryName("c2");
+
+        assertEquals("name2", event.getDeviceName());
+        assertEquals("c2", event.getDeviceCategoryName());
+    }
+
+    @Test
+    public void deviceCategoryAddedEventTest() {
+        DeviceCategoryAddedEvent event = new DeviceCategoryAddedEvent("d1", "m1", "name1", "h1");
+        event.setName("name2");
+
+        assertEquals("name2", event.getName());
+    }
+
+    @Test
+    public void deviceRemovedEventTest() {
+        DeviceRemovedEvent event = new DeviceRemovedEvent("m1", "name", "h1", LocalDateTime.now(), "c1");
+        event.setDeviceName("name2");
+        event.setDeviceCategoryName("c2");
+
+        assertEquals("name2", event.getDeviceName());
+        assertEquals("c2", event.getDeviceCategoryName());
     }
 
 }

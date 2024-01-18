@@ -35,13 +35,19 @@ public class DeviceRepositoryImpl implements DeviceRepository {
     @Override
     @Transactional
     public void removeDevice(String deviceName, String householdId) throws DeviceNotFoundException {
-        Device toRemove = eM.createQuery("FROM Device WHERE " +
-                "name = :deviceName AND household = :householdId", Device.class)
-                .setParameter("deviceName", deviceName)
-                .setParameter("householdId", householdId)
-                .getSingleResult();
-        if (toRemove == null) throw new DeviceNotFoundException();
-        eM.remove(toRemove);
+        try {
+            Device toRemove = eM.createQuery("FROM Device WHERE " +
+                            "name = :deviceName AND household = :householdId", Device.class)
+                    .setParameter("deviceName", deviceName)
+                    .setParameter("householdId", householdId)
+                    .getSingleResult();
+
+            if (toRemove == null) throw new DeviceNotFoundException();
+
+            eM.remove(toRemove);
+        } catch (NullPointerException e) {
+            throw new DeviceNotFoundException();
+        }
     }
 
     @Override

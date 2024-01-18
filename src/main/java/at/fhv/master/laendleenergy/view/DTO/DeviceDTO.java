@@ -7,13 +7,10 @@ public class DeviceDTO {
     String deviceName;
     @JsonProperty
     String deviceCategoryName;
-    @JsonProperty
-    String householdId;
 
-    public DeviceDTO(String deviceName, String deviceCategoryName, String householdId) {
+    public DeviceDTO(String deviceName, String deviceCategoryName) {
         this.deviceName = deviceName;
         this.deviceCategoryName = deviceCategoryName;
-        this.householdId = householdId;
     }
 
 
@@ -29,10 +26,6 @@ public class DeviceDTO {
         return deviceCategoryName;
     }
 
-    public String getHouseholdId() {
-        return householdId;
-    }
-
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
@@ -41,7 +34,4 @@ public class DeviceDTO {
         this.deviceCategoryName = deviceCategoryName;
     }
 
-    public void setHouseholdId(String householdId) {
-        this.householdId = householdId;
-    }
 }

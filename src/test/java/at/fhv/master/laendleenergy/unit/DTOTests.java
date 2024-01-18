@@ -1,9 +1,7 @@
 package at.fhv.master.laendleenergy.unit;
 
 import at.fhv.master.laendleenergy.domain.*;
-import at.fhv.master.laendleenergy.view.DTO.HouseholdMemberDTO;
-import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
-import at.fhv.master.laendleenergy.view.DTO.SavingTargetDTO;
+import at.fhv.master.laendleenergy.view.DTO.*;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,5 +102,25 @@ public class DTOTests {
         assertEquals(incentiveDTO.getId(), incentive.getId());
         assertEquals(incentiveDTO.getDescription(), incentive.getDescription());
         assertEquals(LocalDate.parse(incentiveDTO.getEndDate()), incentive.getEndDate());
+    }
+
+    @Test
+    public void deviceCategoryDTOTest() {
+        String newName = "newname";
+        DeviceCategoryDTO deviceCategoryDTO = new DeviceCategoryDTO("name");
+        deviceCategoryDTO.setName(newName);
+
+        assertEquals(newName, deviceCategoryDTO.getName());
+    }
+
+    @Test
+    public void deviceDTOTest() {
+        String newName = "newname";
+        DeviceDTO deviceDTO = new DeviceDTO("devicename", "categoryname");
+        deviceDTO.setDeviceName(newName);
+        deviceDTO.setDeviceCategoryName(newName);
+
+        assertEquals(newName, deviceDTO.getDeviceName());
+        assertEquals(newName, deviceDTO.getDeviceCategoryName());
     }
 }

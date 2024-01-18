@@ -1,14 +1,13 @@
 package at.fhv.master.laendleenergy.application;
 
 import at.fhv.master.laendleenergy.application.streams.EventHandler;
-import at.fhv.master.laendleenergy.domain.EnergySavingTarget;
-import at.fhv.master.laendleenergy.domain.Household;
-import at.fhv.master.laendleenergy.domain.HouseholdMember;
-import at.fhv.master.laendleenergy.domain.Incentive;
+import at.fhv.master.laendleenergy.domain.*;
+import at.fhv.master.laendleenergy.domain.events.DeviceCategoryAddedEvent;
 import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
 import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
 import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
+import at.fhv.master.laendleenergy.persistence.DeviceRepository;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.TestTransaction;
@@ -31,6 +30,8 @@ public class EventHandlerTests {
 
     @InjectMock
     HouseholdRepository householdRepository;
+    @InjectMock
+    DeviceRepository deviceRepository;
     @Inject
     EventHandler eventHandler;
 
@@ -98,4 +99,13 @@ public class EventHandlerTests {
 
         assertEquals(4, member.getNumberOfCreatedTags());
     }
+
+    @Test
+    public void testHandleDeviceCategoryAddedEvent() {
+        DeviceCategoryAddedEvent event = new DeviceCategoryAddedEvent("d1", "m1", "name1","h1");
+        eventHandler.handleDeviceCategoryAddedEvent(event);
+
+        Mockito.verify(deviceRepository, times(1)).addDeviceCategory(any());
+    }
 }
+

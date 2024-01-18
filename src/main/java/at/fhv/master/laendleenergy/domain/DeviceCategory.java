@@ -24,19 +24,4 @@ public class DeviceCategory {
     public String getCategoryName() {
         return categoryName;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DeviceCategory that = (DeviceCategory) o;
-
-        return categoryName.equals(that.categoryName);
-    }
-
-    @Override
-    public int hashCode() {
-        return categoryName.hashCode();
-    }
 }
