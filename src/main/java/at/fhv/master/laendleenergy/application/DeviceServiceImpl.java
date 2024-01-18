@@ -72,7 +72,7 @@ public class DeviceServiceImpl implements DeviceService {
         deviceRepository.removeDevice(deviceId, householdId);
     }
 
-    @Override
+    /*@Override
     @Transactional
     public void addDeviceCategory(String name) throws JsonProcessingException {
         String memberId = jwt.getClaim("memberId");
@@ -93,7 +93,7 @@ public class DeviceServiceImpl implements DeviceService {
         String memberId = jwt.getClaim("memberId");
         String householdId = jwt.getClaim("householdId");
         deviceRepository.removeDeviceCategory(name);
-    }
+    }*/
 
     @Override
     public List<DeviceCategoryDTO> getAllAvailableDeviceCategories() {

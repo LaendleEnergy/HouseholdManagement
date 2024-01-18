@@ -1,11 +1,14 @@
 package at.fhv.master.laendleenergy.application.streams;
 
+import at.fhv.master.laendleenergy.domain.DeviceCategory;
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
+import at.fhv.master.laendleenergy.domain.events.DeviceCategoryAddedEvent;
 import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
 import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
 import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
+import at.fhv.master.laendleenergy.persistence.DeviceRepository;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,6 +18,9 @@ import jakarta.transaction.Transactional;
 public class EventHandler {
     @Inject
     HouseholdRepository householdRepository;
+
+    @Inject
+    DeviceRepository deviceRepository;
 
     @Transactional
     public void handleHouseholdCreatedEvent(HouseholdCreatedEvent event) {
@@ -52,5 +58,12 @@ public class EventHandler {
         household.removeMember(event.getMemberId());
 
         householdRepository.updateHousehold(household);
+    }
+
+
+    @Transactional
+    public void handleDeviceCategoryAddedEvent(DeviceCategoryAddedEvent deviceCategoryAddedEvent) {
+        DeviceCategory deviceCategory = new DeviceCategory(deviceCategoryAddedEvent.getName());
+        deviceRepository.addDeviceCategory(deviceCategory);
     }
 }
