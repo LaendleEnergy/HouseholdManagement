@@ -3,10 +3,7 @@ package at.fhv.master.laendleenergy.application.streams;
 import at.fhv.master.laendleenergy.domain.DeviceCategory;
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
-import at.fhv.master.laendleenergy.domain.events.DeviceCategoryAddedEvent;
-import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
-import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
-import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
+import at.fhv.master.laendleenergy.domain.events.*;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.DeviceRepository;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
@@ -41,11 +38,11 @@ public class EventHandler {
     }
 
     @Transactional
-    public void handleTaggingCreatedEvent(String householdId, String memberId) throws HouseholdNotFoundException {
-        Household household = householdRepository.getHouseholdById(householdId);
+    public void handleTaggingCreatedEvent(TaggingCreatedEvent event) throws HouseholdNotFoundException {
+        Household household = householdRepository.getHouseholdById(event.getHouseholdId());
 
         for (HouseholdMember member : household.getHouseholdMembers()) {
-            if (member.getId().equals(memberId)) {
+            if (member.getId().equals(event.getMemberId())) {
                 member.increaseNumberOfCreatedTags();
                 return;
             }

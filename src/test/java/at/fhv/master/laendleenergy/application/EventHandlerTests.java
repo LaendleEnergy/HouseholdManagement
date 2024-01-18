@@ -2,10 +2,7 @@ package at.fhv.master.laendleenergy.application;
 
 import at.fhv.master.laendleenergy.application.streams.EventHandler;
 import at.fhv.master.laendleenergy.domain.*;
-import at.fhv.master.laendleenergy.domain.events.DeviceCategoryAddedEvent;
-import at.fhv.master.laendleenergy.domain.events.HouseholdCreatedEvent;
-import at.fhv.master.laendleenergy.domain.events.MemberAddedEvent;
-import at.fhv.master.laendleenergy.domain.events.MemberRemovedEvent;
+import at.fhv.master.laendleenergy.domain.events.*;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.DeviceRepository;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
@@ -92,10 +89,11 @@ public class EventHandlerTests {
 
     @Test
     public void testHandleTaggingCreatedEvent() throws HouseholdNotFoundException {
+        TaggingCreatedEvent event = new TaggingCreatedEvent("e1", LocalDateTime.now(), memberId, "d1", householdId);
         HouseholdMember member = household.getHouseholdMembers().get(0);
 
         assertEquals(3, member.getNumberOfCreatedTags());
-        eventHandler.handleTaggingCreatedEvent(householdId, member.getId());
+        eventHandler.handleTaggingCreatedEvent(event);
 
         assertEquals(4, member.getNumberOfCreatedTags());
     }
