@@ -5,6 +5,10 @@ This project uses Quarkus, the Supersonic Subatomic Java Framework.
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
 ## Running the application in dev mode
+Make sure, Docker is running.
+
+Start Redis:
+`docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest`
 
 You can run your application in dev mode that enables live coding using:
 ```shell script
@@ -29,7 +33,11 @@ If you want to build an _über-jar_, execute the following command:
 ./gradlew build -Dquarkus.package.type=uber-jar
 ```
 ## Testing
-You can run the tests via the `quarkus test` command
+Make sure, Docker is running.
+
+Start Redis:
+`docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest`
+You can run the tests via the `quarkus test` command. Alternatively you can right-click on `src/test` and click on `Run tests in household-management`.
 
 The Jacoco report is available at: `build/jacoco-report/index.html`
 The test report can be found at: `build/reports/tests/test/index.html`
