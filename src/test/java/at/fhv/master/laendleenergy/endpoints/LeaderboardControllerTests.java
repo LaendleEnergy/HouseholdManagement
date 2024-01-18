@@ -75,4 +75,15 @@ public class LeaderboardControllerTests {
                 .then()
                 .statusCode(500);
     }
+
+    @Test
+    public void testGetCurrentIncentiveWithHouseholdNotFoundException() throws HouseholdNotFoundException {
+        Mockito.when(leaderboardService.getLeaderboardOfHousehold(anyString())).thenThrow(HouseholdNotFoundException.class);
+
+        given()
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().get("/get")
+                .then()
+                .statusCode(404);
+    }
 }

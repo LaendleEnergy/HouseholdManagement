@@ -1,10 +1,12 @@
 package at.fhv.master.laendleenergy.endpoints;
 
 import at.fhv.master.laendleenergy.application.EnergySavingService;
+import at.fhv.master.laendleenergy.domain.exceptions.DeviceCategoryNotFound;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
 import at.fhv.master.laendleenergy.view.DTO.SavingTargetDTO;
 import at.fhv.master.laendleenergy.view.EnergySavingController;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -93,6 +95,17 @@ public class EnergySavingControllerTests {
     }
 
     @Test
+    public void testGetCurrentIncentiveHouseholdNotFoundException() throws HouseholdNotFoundException {
+        Mockito.when(energySavingService.getCurrentIncentive(anyString())).thenThrow(HouseholdNotFoundException.class);
+
+        given()
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().get("/getCurrentIncentive")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
     public void testUpdateIncentiveEndpointUnauthenticated() {
         given()
                 .contentType(ContentType.JSON)
@@ -140,6 +153,19 @@ public class EnergySavingControllerTests {
     }
 
     @Test
+    public void testUpdateIncentiveHouseholdNotFoundException() throws HouseholdNotFoundException {
+        Mockito.doThrow(HouseholdNotFoundException.class).when(energySavingService).updateIncentive(anyString(), any());
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(incentiveDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/updateIncentive")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
     public void testGetCurrentSavingTargetEndpointWithValidToken() throws HouseholdNotFoundException {
         given()
                 .header("Authorization", "Bearer " + validJwtToken)
@@ -177,6 +203,18 @@ public class EnergySavingControllerTests {
                 .then()
                 .statusCode(500);
     }
+
+    @Test
+    public void testGetCurrentSavingTargetEndpointHouseholdNotFoundException() throws HouseholdNotFoundException {
+        Mockito.when(energySavingService.getCurrentSavingTarget(anyString())).thenThrow(HouseholdNotFoundException.class);
+
+        given()
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().get("/getCurrentSavingTarget")
+                .then()
+                .statusCode(404);
+    }
+
 
     @Test
     public void testUpdateSavingTargetEndpointWithValidToken() throws HouseholdNotFoundException {
@@ -223,6 +261,19 @@ public class EnergySavingControllerTests {
                 .when().post("/updateSavingTarget")
                 .then()
                 .statusCode(500);
+    }
+
+    @Test
+    public void testUpdateSavingTargetEndpointWithHouseholdNotFoundException() throws HouseholdNotFoundException {
+        Mockito.doThrow(HouseholdNotFoundException.class).when(energySavingService).updateSavingTarget(anyString(), any());
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(savingTargetDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/updateSavingTarget")
+                .then()
+                .statusCode(404);
     }
 
 }
