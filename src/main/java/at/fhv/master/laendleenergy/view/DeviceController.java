@@ -37,7 +37,7 @@ public class DeviceController {
         }
     }
 
-    @POST
+    /*@POST
     @Path("/category/add")
     @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
@@ -48,7 +48,7 @@ public class DeviceController {
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-    }
+    }*/
 
     @POST
     @Path("/add")
@@ -81,7 +81,7 @@ public class DeviceController {
         }
     }
 
-    @DELETE
+    /*@DELETE
     @Path("/category/{categoryName}")
     @PermitAll
     public Response removeDeviceCategory(@PathParam("categoryName") String categoryName) {
@@ -94,5 +94,5 @@ public class DeviceController {
         catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-    }
+    }*/
 }

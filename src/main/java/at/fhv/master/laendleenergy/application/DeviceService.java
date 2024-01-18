@@ -11,8 +11,8 @@ import java.util.List;
 public interface DeviceService {
     void addDevice(String name, String category) throws HouseholdNotFoundException, DeviceCategoryNotFound, JsonProcessingException;
     void removeDevice(String deviceId) throws DeviceNotFoundException;
-    void addDeviceCategory(String name) throws JsonProcessingException;
-    void removeDeviceCategory(String name) throws DeviceCategoryNotFound;
+    //void addDeviceCategory(String name) throws JsonProcessingException;
+    //void removeDeviceCategory(String name) throws DeviceCategoryNotFound;
 
     List<DeviceCategoryDTO> getAllAvailableDeviceCategories();
 }
