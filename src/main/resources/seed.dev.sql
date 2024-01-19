@@ -15,8 +15,8 @@ insert into household_member (id, name, numberOfCreatedTags, household_id) value
 INSERT INTO public.devicecategory (category_name) VALUES ('fridge');
 INSERT INTO public.devicecategory (category_name) VALUES ('microwave');
 
-insert into device (device_name, household_id, category_name) values ('Toller Gerätename', 'h1', 'fridge');
-insert into device (device_name, household_id, category_name) values ('2. Toller Gerätename', 'h1', 'fridge');
-insert into device (device_name, household_id, category_name) values ('Testname', 'h1', 'microwave');
+insert into device (device_name, household_id, category_name) values ('Testname1', 'h1', 'fridge');
+insert into device (device_name, household_id, category_name) values ('Testname2', 'h1', 'fridge');
+insert into device (device_name, household_id, category_name) values ('Testname3', 'h1', 'microwave');
 
 
