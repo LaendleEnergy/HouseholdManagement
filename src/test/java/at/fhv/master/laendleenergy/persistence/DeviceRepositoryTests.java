@@ -3,6 +3,7 @@ package at.fhv.master.laendleenergy.persistence;
 import at.fhv.master.laendleenergy.domain.*;
 import at.fhv.master.laendleenergy.domain.exceptions.DeviceCategoryNotFound;
 import at.fhv.master.laendleenergy.domain.exceptions.DeviceNotFoundException;
+import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
@@ -17,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
 @QuarkusTest
@@ -58,7 +60,7 @@ public class DeviceRepositoryTests {
         Query<Device> queryMock = Mockito.mock(Query.class);
 
         Mockito.when(entityManager.createQuery(Mockito.anyString(), Mockito.eq(Device.class))).thenReturn(queryMock);
-        Mockito.when(queryMock.setParameter(Mockito.anyString(), Mockito.any())).thenReturn(queryMock);
+        Mockito.when(queryMock.setParameter(Mockito.anyString(), any())).thenReturn(queryMock);
         Mockito.when(queryMock.getSingleResult()).thenReturn(device);
 
         deviceRepository.removeDevice(deviceName, household);
@@ -118,5 +120,16 @@ public class DeviceRepositoryTests {
 
         List<DeviceCategory> actualCategories = deviceRepository.getAllDeviceCategories();
         assertEquals(2, actualCategories.size());
+    }
+
+    @Test
+    public void updateDeviceTest() throws DeviceNotFoundException {
+        Device device = new Device(new DeviceCategory("test"), "test", household);
+        device.setDeviceCategory(new DeviceCategory("new"));
+        device.setName("new");
+
+        deviceRepository.updateDevice(device);
+
+        Mockito.verify(entityManager, times(1)).merge(any());
     }
 }

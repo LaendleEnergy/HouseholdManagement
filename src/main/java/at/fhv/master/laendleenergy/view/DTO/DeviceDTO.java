@@ -1,5 +1,6 @@
 package at.fhv.master.laendleenergy.view.DTO;
 
+import at.fhv.master.laendleenergy.domain.Device;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DeviceDTO {

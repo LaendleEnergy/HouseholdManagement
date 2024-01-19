@@ -12,11 +12,11 @@ insert into household_member (id, name, numberOfCreatedTags, household_id) value
 insert into household_member (id, name, numberOfCreatedTags, household_id) values ('1', 'Alice', '0', 'h1');
 insert into household_member (id, name, numberOfCreatedTags, household_id) values ('2', 'Felix Lahnsteiner', '0', 'h2');
 
-INSERT INTO public.devicecategory (category_name) VALUES ('fridge');
-INSERT INTO public.devicecategory (category_name) VALUES ('microwave');
+INSERT INTO public.devicecategory (category_name) VALUES ('Kühlschrank');
+INSERT INTO public.devicecategory (category_name) VALUES ('Mikrowelle');
 
-insert into device (device_name, household_id, category_name) values ('Testname1', 'h1', 'fridge');
-insert into device (device_name, household_id, category_name) values ('Testname2', 'h1', 'fridge');
-insert into device (device_name, household_id, category_name) values ('Testname3', 'h1', 'microwave');
+insert into device (device_name, household_id, category_name) values ('Testname1', 'h1', 'Kühlschrank');
+insert into device (device_name, household_id, category_name) values ('Testname2', 'h1', 'Kühlschrank');
+insert into device (device_name, household_id, category_name) values ('Testname3', 'h1', 'Mikrowelle');
 
 

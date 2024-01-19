@@ -13,6 +13,7 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import static io.restassured.RestAssured.given;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 
@@ -198,5 +199,91 @@ public class DeviceControllerTests {
                 .when().delete("/{deviceName}")
                 .then()
                 .statusCode(500);
+    }
+
+    @Test
+    public void testUpdateDeviceEndpointWithValidToken() throws HouseholdNotFoundException, DeviceNotFoundException, DeviceCategoryNotFound {
+        given()
+                .contentType(ContentType.JSON)
+                .body(deviceDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/update")
+                .then()
+                .statusCode(200);
+
+        Mockito.verify(deviceService, times(1)).updateDevice(any(), anyString());
+    }
+
+    @Test
+    public void testUpdateDeviceEndpointWithInvalidToken() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(deviceDTOJSONString)
+                .header("Authorization", "Bearer " + invalidJwtToken)
+                .when().post("/update")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testUpdateDeviceEndpointUnauthenticated() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(deviceDTOJSONString)
+                .when().post("/update")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testUpdateDeviceEndpointWithInternalServerError() throws DeviceNotFoundException, HouseholdNotFoundException, DeviceCategoryNotFound {
+        Mockito.doThrow(NullPointerException.class).when(deviceService).updateDevice(any(), anyString());
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(deviceDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/update")
+                .then()
+                .statusCode(500);
+    }
+
+    @Test
+    public void testUpdateDeviceEndpointWithHouseholdNotFoundException() throws HouseholdNotFoundException, DeviceNotFoundException, DeviceCategoryNotFound {
+        Mockito.doThrow(HouseholdNotFoundException.class).when(deviceService).updateDevice(any(), anyString());
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(deviceDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/update")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void testUpdateDeviceEndpointWithDeviceNotFoundException() throws HouseholdNotFoundException, DeviceNotFoundException, DeviceCategoryNotFound {
+        Mockito.doThrow(DeviceNotFoundException.class).when(deviceService).updateDevice(any(), anyString());
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(deviceDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/update")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void testUpdateDeviceEndpointWithDeviceCategoryNotFoundException() throws HouseholdNotFoundException, DeviceNotFoundException, DeviceCategoryNotFound {
+        Mockito.doThrow(DeviceCategoryNotFound.class).when(deviceService).updateDevice(any(), anyString());
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(deviceDTOJSONString)
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().post("/update")
+                .then()
+                .statusCode(404);
     }
 }

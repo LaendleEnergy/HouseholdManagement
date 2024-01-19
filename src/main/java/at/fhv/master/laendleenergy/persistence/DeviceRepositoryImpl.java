@@ -52,6 +52,11 @@ public class DeviceRepositoryImpl implements DeviceRepository {
     }
 
     @Override
+    public void updateDevice(Device device) {
+        eM.merge(device);
+    }
+
+    @Override
     @Transactional
     public void addDeviceCategory(DeviceCategory deviceCategory) {
         eM.persist(deviceCategory);

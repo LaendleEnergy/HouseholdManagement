@@ -16,6 +16,7 @@ public interface DeviceRepository {
 
     void addDevice(Device device);
     void removeDevice(String deviceName, Household household) throws DeviceNotFoundException;
+    void updateDevice(Device device) throws DeviceNotFoundException;
     void addDeviceCategory(DeviceCategory deviceCategory);
     void removeDeviceCategory(String name) throws DeviceCategoryNotFound;
 

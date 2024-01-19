@@ -51,6 +51,7 @@ public class DeviceServiceTests {
                 new LinkedList<>());
         deviceCategory = new DeviceCategory(deviceCategoryName);
         device = new Device(deviceCategory, deviceName, household);
+        household.setDevices(List.of(device));
 
         Mockito.when(householdRepository.getHouseholdById(householdId)).thenReturn(household);
         Mockito.when(deviceRepository.getDeviceCategoryByName(deviceCategoryName)).thenReturn(deviceCategory);
@@ -90,5 +91,17 @@ public class DeviceServiceTests {
 
         assertEquals(expected.size(), actual.size());
         Mockito.verify(householdRepository, times(1)).getDevicesOfHousehold(anyString());
+    }
+
+    @Test
+    public void updateDeviceTest() throws HouseholdNotFoundException, DeviceNotFoundException, DeviceCategoryNotFound {
+        DeviceDTO deviceDTO = new DeviceDTO(device.getName(), "name");
+        deviceDTO.setCategoryName(device.getDeviceCategory().getCategoryName());
+
+        deviceService.updateDevice(deviceDTO, householdId);
+
+        Mockito.verify(householdRepository, times(1)).getHouseholdById(anyString());
+        Mockito.verify(deviceRepository, times(1)).updateDevice(any());
+        Mockito.verify(deviceRepository, times(1)).getDeviceCategoryByName(anyString());
     }
 }

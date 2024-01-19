@@ -97,4 +97,26 @@ public class DeviceController {
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/update")
+    @RolesAllowed("Admin")
+    public Response updateDevice(DeviceDTO deviceDTO) {
+        boolean hasJWT = jwt.getClaimNames() != null;
+
+        if (hasJWT && jwt.containsClaim("householdId")) {
+            String householdId = jwt.getClaim("householdId");
+            try {
+                deviceService.updateDevice(deviceDTO, householdId);
+                return Response.ok().build();
+            } catch (HouseholdNotFoundException | DeviceNotFoundException | DeviceCategoryNotFound e) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
 }

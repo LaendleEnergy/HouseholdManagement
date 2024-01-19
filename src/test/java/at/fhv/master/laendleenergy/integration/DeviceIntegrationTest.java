@@ -50,9 +50,10 @@ public class DeviceIntegrationTest {
     @BeforeEach
     void setUp() {
         DeviceDTO deviceDTO = new DeviceDTO("name", "microwave");
-        DeviceCategory deviceCategory = new DeviceCategory();
+        DeviceCategory deviceCategory = new DeviceCategory("microwave");
         household = new Household(householdId, new Incentive(), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
         device = new Device(deviceCategory, deviceDTO.getName(), household);
+        household.setDevices(List.of(device));
 
         Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
         Mockito.when(entityManager.find(DeviceCategory.class, "microwave")).thenReturn(deviceCategory);
@@ -74,9 +75,6 @@ public class DeviceIntegrationTest {
 
     @Test
     public void testGetDevicesEndpointWithValidToken() {
-        Household household = new Household(householdId, new Incentive(), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
-        Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
-
         given()
                 .header("Authorization", "Bearer " + validJwtToken)
                 .when().get("/get")
@@ -109,6 +107,17 @@ public class DeviceIntegrationTest {
                 .header("Authorization", "Bearer " + validJwtToken)
                 .pathParam("deviceName", "name")
                 .when().delete("/{deviceName}")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void testUpdateDeviceWithValidToken() {
+        given()
+                .header("Authorization", "Bearer " + validJwtToken)
+                .contentType(ContentType.JSON)
+                .body(deviceDTOJSONString)
+                .when().post("/update")
                 .then()
                 .statusCode(200);
     }

@@ -18,6 +18,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -50,6 +51,28 @@ public class DeviceServiceImpl implements DeviceService {
     public void removeDevice(String deviceName, String householdId) throws DeviceNotFoundException, HouseholdNotFoundException {
         Household household = householdRepository.getHouseholdById(householdId);
         deviceRepository.removeDevice(deviceName, household);
+    }
+
+    @Override
+    @Transactional
+    public void updateDevice(DeviceDTO deviceDTO, String householdId) throws HouseholdNotFoundException, DeviceCategoryNotFound, DeviceNotFoundException {
+        Household household = householdRepository.getHouseholdById(householdId);
+        System.out.println(household.getId());
+        DeviceCategory deviceCategory = deviceRepository.getDeviceCategoryByName(deviceDTO.getCategoryName());
+        System.out.println(deviceCategory.getCategoryName());
+        System.out.println(household.getDevices().get(0).getName());
+        System.out.println(deviceDTO.getName());
+        Optional<Device> device = household.getDevices().stream().filter(d -> d.getName().equals(deviceDTO.getName())).findFirst();
+        System.out.println(device.isPresent());
+        if (device.isEmpty()) {
+            throw new DeviceNotFoundException();
+        }
+
+        Device newDevice = device.get();
+        newDevice.setDeviceCategory(deviceCategory);
+        newDevice.setName(deviceDTO.getName());
+
+        deviceRepository.updateDevice(newDevice);
     }
 
     @Override
