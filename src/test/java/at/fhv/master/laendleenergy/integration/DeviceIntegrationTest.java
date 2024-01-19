@@ -1,6 +1,7 @@
 package at.fhv.master.laendleenergy.integration;
 
 import at.fhv.master.laendleenergy.domain.*;
+import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.view.DTO.DeviceDTO;
 import at.fhv.master.laendleenergy.view.DeviceController;
 import io.quarkus.test.InjectMock;
@@ -15,6 +16,8 @@ import org.mockito.Mockito;
 import java.util.LinkedList;
 import java.util.List;
 import static io.restassured.RestAssured.given;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 
 @QuarkusTest
 @TestHTTPEndpoint(DeviceController.class)
@@ -38,7 +41,7 @@ public class DeviceIntegrationTest {
     @InjectMock
     EntityManager entityManager;
     private final String validJwtToken = "eyJraWQiOiIvcHJpdmF0ZWtleS5wZW0iLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FyZDMzMy5jb20iLCJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTcwNDcxMTgwMCwiZXhwIjozNjAwMTcwNDcxMTgwMCwiZ3JvdXBzIjpbIkFkbWluIl0sIm1lbWJlcklkIjoiMSIsImhvdXNlaG9sZElkIjoiaDEiLCJkZXZpY2VJZCI6IkQxIiwianRpIjoiYzlhNjJmYWEtMGIxZS00YzdiLTk3MDQtOTY0N2YwNGZmZDFjIn0.XgV-PnqA_LB9OFFE8-zr0UIMugTb6P4qPvymCoancALWvS4VJjF-tXjU02yms0YvSXC-GmpbyUDZtiPm26KApjawXaoNSa5gonsnTHl6s4bT8MkgUrNNs9Di9KmCHgoTohgr9B7pelM6eJCOf5tT-phkoSvaxxrYn099BYsUeA1DVVsApic1egEV1ItZYRops8XUR-KPydeimgYq6tpc2g-7L7RiNIYkssvVxxh25-EGn8lLkivBu3gA7_2siCZfVZbP8JWagT629OK9B_GpnOhz8_-p5KSjMRjDTJBcRTnzYQDGzOB-RmsB0NZaLPw5ulqR1yN3r5KEpm-GExAKRw";
-    static final String deviceDTOJSONString = "{\"deviceName\":\"name\",\"deviceCategoryName\":\"microwave\"}";
+    static final String deviceDTOJSONString = "{\"name\":\"name\",\"categoryName\":\"microwave\"}";
     static String householdId = "h1";
     static Household household;
     static Device device;
@@ -49,7 +52,7 @@ public class DeviceIntegrationTest {
         DeviceDTO deviceDTO = new DeviceDTO("name", "microwave");
         DeviceCategory deviceCategory = new DeviceCategory();
         household = new Household(householdId, new Incentive(), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
-        device = new Device(deviceCategory, deviceDTO.getDeviceName(), household);
+        device = new Device(deviceCategory, deviceDTO.getName(), household);
 
         Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
         Mockito.when(entityManager.find(DeviceCategory.class, "microwave")).thenReturn(deviceCategory);
@@ -65,6 +68,18 @@ public class DeviceIntegrationTest {
         given()
                 .header("Authorization", "Bearer " + validJwtToken)
                 .when().get("/getCategories")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void testGetDevicesEndpointWithValidToken() {
+        Household household = new Household(householdId, new Incentive(), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
+        Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
+
+        given()
+                .header("Authorization", "Bearer " + validJwtToken)
+                .when().get("/get")
                 .then()
                 .statusCode(200);
     }

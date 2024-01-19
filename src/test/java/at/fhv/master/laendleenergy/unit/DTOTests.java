@@ -117,10 +117,10 @@ public class DTOTests {
     public void deviceDTOTest() {
         String newName = "newname";
         DeviceDTO deviceDTO = new DeviceDTO("devicename", "categoryname");
-        deviceDTO.setDeviceName(newName);
-        deviceDTO.setDeviceCategoryName(newName);
+        deviceDTO.setName(newName);
+        deviceDTO.setCategoryName(newName);
 
-        assertEquals(newName, deviceDTO.getDeviceName());
-        assertEquals(newName, deviceDTO.getDeviceCategoryName());
+        assertEquals(newName, deviceDTO.getName());
+        assertEquals(newName, deviceDTO.getCategoryName());
     }
 }

@@ -61,14 +61,14 @@ public class DeviceRepositoryTests {
         Mockito.when(queryMock.setParameter(Mockito.anyString(), Mockito.any())).thenReturn(queryMock);
         Mockito.when(queryMock.getSingleResult()).thenReturn(device);
 
-        deviceRepository.removeDevice(deviceName, householdId);
+        deviceRepository.removeDevice(deviceName, household);
 
         Mockito.verify(entityManager, times(1)).remove(device);
     }
 
     @Test
     public void removeDeviceTestException() {
-        assertThrows(DeviceNotFoundException.class, () -> deviceRepository.removeDevice(deviceName, householdId));
+        assertThrows(DeviceNotFoundException.class, () -> deviceRepository.removeDevice(deviceName, household));
 
         Mockito.verify(entityManager, times(0)).remove(device);
     }

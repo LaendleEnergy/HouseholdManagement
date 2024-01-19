@@ -52,4 +52,12 @@ public class HouseholdRepositoryImpl implements HouseholdRepository {
 
         return household.getHouseholdMembers();
     }
+
+    @Override
+    public List<Device> getDevicesOfHousehold(String householdId) throws HouseholdNotFoundException {
+        Household household = entityManager.find(Household.class, householdId);
+        if(household == null) throw new HouseholdNotFoundException();
+
+        return household.getDevices();
+    }
 }

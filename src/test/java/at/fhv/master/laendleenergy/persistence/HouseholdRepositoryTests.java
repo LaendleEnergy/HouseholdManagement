@@ -1,9 +1,6 @@
 package at.fhv.master.laendleenergy.persistence;
 
-import at.fhv.master.laendleenergy.domain.EnergySavingTarget;
-import at.fhv.master.laendleenergy.domain.Household;
-import at.fhv.master.laendleenergy.domain.HouseholdMember;
-import at.fhv.master.laendleenergy.domain.Incentive;
+import at.fhv.master.laendleenergy.domain.*;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -36,7 +33,7 @@ public class HouseholdRepositoryTests {
         household = new Household(householdId,
                 new Incentive("Pizza", LocalDate.of(2050, 10, 31)),
                 new EnergySavingTarget(10, "Vormonat"),
-                new LinkedList<>(),
+                new LinkedList<>(List.of(new Device(new DeviceCategory("test"), "test", household))),
                 new LinkedList<>());
     }
 
@@ -110,12 +107,25 @@ public class HouseholdRepositoryTests {
     public void getMembersOfHousehold() throws HouseholdNotFoundException {
         Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
 
-        Household actualHousehold = householdRepository.getHouseholdById(householdId);
-        assertEquals(actualHousehold.getHouseholdMembers(), household.getHouseholdMembers());
+        List<HouseholdMember> actualHouseholds = householdRepository.getMembersOfHousehold(householdId);
+        assertEquals(actualHouseholds.size(), household.getHouseholdMembers().size());
     }
 
     @Test
     public void getMembersOfHousehold_HouseholdDoesNotExist() {
         assertThrows(HouseholdNotFoundException.class, () -> householdRepository.getMembersOfHousehold(householdId));
+    }
+
+    @Test
+    public void getDevicesOfHousehold() throws HouseholdNotFoundException {
+        Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
+
+        List<Device> actualDevices = householdRepository.getDevicesOfHousehold(householdId);
+        assertEquals(actualDevices.size(), household.getDevices().size());
+    }
+
+    @Test
+    public void getDevicesOfHousehold_HouseholdDoesNotExist() {
+        assertThrows(HouseholdNotFoundException.class, () -> householdRepository.getDevicesOfHousehold(householdId));
     }
 }

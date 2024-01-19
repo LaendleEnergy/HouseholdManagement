@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DeviceDTO {
     @JsonProperty
-    String deviceName;
+    String name;
     @JsonProperty
-    String deviceCategoryName;
+    String categoryName;
 
-    public DeviceDTO(String deviceName, String deviceCategoryName) {
-        this.deviceName = deviceName;
-        this.deviceCategoryName = deviceCategoryName;
+    public DeviceDTO(String name, String categoryName) {
+        this.name = name;
+        this.categoryName = categoryName;
     }
 
 
@@ -18,20 +18,20 @@ public class DeviceDTO {
 
     }
 
-    public String getDeviceName() {
-        return deviceName;
+    public String getName() {
+        return name;
     }
 
-    public String getDeviceCategoryName() {
-        return deviceCategoryName;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setDeviceCategoryName(String deviceCategoryName) {
-        this.deviceCategoryName = deviceCategoryName;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
 }

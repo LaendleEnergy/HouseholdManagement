@@ -6,6 +6,8 @@ import at.fhv.master.laendleenergy.domain.exceptions.DeviceNotFoundException;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.view.DTO.DeviceCategoryDTO;
 import at.fhv.master.laendleenergy.view.DTO.DeviceDTO;
+import at.fhv.master.laendleenergy.view.DTO.IncentiveDTO;
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -33,6 +35,25 @@ public class DeviceController {
         }
     }
 
+    @GET
+    @Path("/get")
+    @Authenticated
+    public Response getDevicesOfHousehold() {
+        boolean hasJWT = jwt.getClaimNames() != null;
+
+        if (hasJWT && jwt.containsClaim("householdId")) {
+            String householdId = jwt.getClaim("householdId");
+            try {
+                return Response.ok(deviceService.getDevicesOfHousehold(householdId), MediaType.APPLICATION_JSON).build();
+            } catch (HouseholdNotFoundException e) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+
     @POST
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -46,7 +67,7 @@ public class DeviceController {
             String deviceId = jwt.getClaim("deviceId");
 
             try {
-                deviceService.addDevice(device.getDeviceName(), device.getDeviceCategoryName(), deviceId, householdId, memberId);
+                deviceService.addDevice(device.getName(), device.getCategoryName(), deviceId, householdId, memberId);
                 return Response.ok("Device sucessfully added", MediaType.APPLICATION_JSON).build();
             } catch (HouseholdNotFoundException | DeviceCategoryNotFound e) {
                 return Response.status(Response.Status.NOT_FOUND).build();

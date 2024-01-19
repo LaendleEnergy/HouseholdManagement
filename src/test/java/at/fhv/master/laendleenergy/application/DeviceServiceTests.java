@@ -7,6 +7,7 @@ import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
 import at.fhv.master.laendleenergy.persistence.DeviceRepository;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
 import at.fhv.master.laendleenergy.view.DTO.DeviceCategoryDTO;
+import at.fhv.master.laendleenergy.view.DTO.DeviceDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.TestTransaction;
@@ -20,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 
 @QuarkusTest
@@ -54,6 +56,7 @@ public class DeviceServiceTests {
         Mockito.when(deviceRepository.getDeviceCategoryByName(deviceCategoryName)).thenReturn(deviceCategory);
         List<DeviceCategory> deviceCategories = List.of(new DeviceCategory(), new DeviceCategory());
         Mockito.when(deviceRepository.getAllDeviceCategories()).thenReturn(deviceCategories);
+        Mockito.when(householdRepository.getDevicesOfHousehold(householdId)).thenReturn(List.of(new Device(deviceCategory, deviceName, household), new Device(deviceCategory, deviceName, household)));
     }
 
 
@@ -65,10 +68,10 @@ public class DeviceServiceTests {
     }
 
     @Test
-    public void removeDeviceTest() throws DeviceNotFoundException {
+    public void removeDeviceTest() throws DeviceNotFoundException, HouseholdNotFoundException {
         deviceService.removeDevice(deviceName, householdId);
 
-        Mockito.verify(deviceRepository, times(1)).removeDevice(deviceName, householdId);
+        Mockito.verify(deviceRepository, times(1)).removeDevice(deviceName, household);
     }
 
     @Test
@@ -78,5 +81,14 @@ public class DeviceServiceTests {
 
         assertEquals(expected.size(), actual.size());
         Mockito.verify(deviceRepository, times(1)).getAllDeviceCategories();
+    }
+
+    @Test
+    public void getDevicesOfHouseholdTest() throws HouseholdNotFoundException {
+        List<DeviceDTO> actual = deviceService.getDevicesOfHousehold(householdId);
+        List<DeviceDTO> expected = List.of(new DeviceDTO(deviceName, deviceCategoryName), new DeviceDTO(deviceName, deviceCategoryName));
+
+        assertEquals(expected.size(), actual.size());
+        Mockito.verify(householdRepository, times(1)).getDevicesOfHousehold(anyString());
     }
 }

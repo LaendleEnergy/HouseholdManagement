@@ -1,8 +1,6 @@
 package at.fhv.master.laendleenergy.domain;
 
 import jakarta.persistence.*;
-import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Table(name="device")

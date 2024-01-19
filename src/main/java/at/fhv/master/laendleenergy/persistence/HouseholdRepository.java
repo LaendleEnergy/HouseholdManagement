@@ -1,5 +1,6 @@
 package at.fhv.master.laendleenergy.persistence;
 
+import at.fhv.master.laendleenergy.domain.Device;
 import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.HouseholdMember;
 import at.fhv.master.laendleenergy.domain.exceptions.HouseholdNotFoundException;
@@ -11,4 +12,5 @@ public interface HouseholdRepository {
     void updateHousehold(Household household) throws HouseholdNotFoundException;
     Household getHouseholdById(String householdId) throws HouseholdNotFoundException;
     List<HouseholdMember> getMembersOfHousehold(String householdId) throws HouseholdNotFoundException;
+    List<Device> getDevicesOfHousehold(String householdId) throws HouseholdNotFoundException;
 }

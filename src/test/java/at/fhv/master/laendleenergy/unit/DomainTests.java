@@ -2,16 +2,12 @@ package at.fhv.master.laendleenergy.unit;
 
 import at.fhv.master.laendleenergy.domain.*;
 import at.fhv.master.laendleenergy.domain.events.*;
-import io.lettuce.core.StreamMessage;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

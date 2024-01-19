@@ -12,6 +12,7 @@ import at.fhv.master.laendleenergy.domain.serializer.DeviceAddedEventSerializer;
 import at.fhv.master.laendleenergy.persistence.DeviceRepository;
 import at.fhv.master.laendleenergy.persistence.HouseholdRepository;
 import at.fhv.master.laendleenergy.view.DTO.DeviceCategoryDTO;
+import at.fhv.master.laendleenergy.view.DTO.DeviceDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -46,8 +47,9 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     @Transactional
-    public void removeDevice(String deviceName, String householdId) throws DeviceNotFoundException {
-        deviceRepository.removeDevice(deviceName, householdId);
+    public void removeDevice(String deviceName, String householdId) throws DeviceNotFoundException, HouseholdNotFoundException {
+        Household household = householdRepository.getHouseholdById(householdId);
+        deviceRepository.removeDevice(deviceName, household);
     }
 
     @Override
@@ -56,5 +58,11 @@ public class DeviceServiceImpl implements DeviceService {
                 .stream().map(
                         deviceCategory -> new DeviceCategoryDTO(deviceCategory.getCategoryName())
                 ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DeviceDTO> getDevicesOfHousehold(String householdId) throws HouseholdNotFoundException {
+        List<Device> devices = householdRepository.getDevicesOfHousehold(householdId);
+        return devices.stream().map(device -> new DeviceDTO(device.getName(), device.getDeviceCategory().getCategoryName())).collect(Collectors.toList());
     }
 }

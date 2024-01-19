@@ -2,6 +2,7 @@ package at.fhv.master.laendleenergy.persistence;
 
 import at.fhv.master.laendleenergy.domain.Device;
 import at.fhv.master.laendleenergy.domain.DeviceCategory;
+import at.fhv.master.laendleenergy.domain.Household;
 import at.fhv.master.laendleenergy.domain.exceptions.DeviceCategoryNotFound;
 import at.fhv.master.laendleenergy.domain.exceptions.DeviceNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,12 +35,12 @@ public class DeviceRepositoryImpl implements DeviceRepository {
 
     @Override
     @Transactional
-    public void removeDevice(String deviceName, String householdId) throws DeviceNotFoundException {
+    public void removeDevice(String deviceName, Household household) throws DeviceNotFoundException {
         try {
             Device toRemove = eM.createQuery("FROM Device WHERE " +
-                            "name = :deviceName AND household = :householdId", Device.class)
+                            "name = :deviceName AND household = :household", Device.class)
                     .setParameter("deviceName", deviceName)
-                    .setParameter("householdId", householdId)
+                    .setParameter("household", household)
                     .getSingleResult();
 
             if (toRemove == null) throw new DeviceNotFoundException();
