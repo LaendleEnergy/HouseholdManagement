@@ -20,14 +20,12 @@ public class HouseholdCreatedEventConsumer implements Consumer<HouseholdCreatedE
 
     public HouseholdCreatedEventConsumer(RedisDataSource ds) {
         PubSubCommands<HouseholdCreatedEvent> pub = ds.pubsub(HouseholdCreatedEvent.class);
-        pub.subscribe("HouseholdCreatedEvent", this);
+        pub.subscribe("HouseholdAddedEvent", this);
     }
 
     @Override
     public void accept(HouseholdCreatedEvent householdCreatedEvent) {
-        System.out.println("in accept");
         CompletableFuture.runAsync(() -> {
-            System.out.println(householdCreatedEvent.getEventId());
             eventHandler.handleHouseholdCreatedEvent(householdCreatedEvent);
         });
     }
