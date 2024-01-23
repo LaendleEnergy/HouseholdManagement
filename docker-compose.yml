@@ -48,7 +48,7 @@ services:
 
   accountmanagement:
     container_name: account_management
-    build: "C:\Users\Bianca\Informatik-Studium\Master\Semester_3\Projekt\AccountManagement"
+    image: bianca907/account-management:latest
     ports:
      - "8080:9000"
     depends_on:
