@@ -12,7 +12,7 @@ insert into household_member (id, name, numberOfCreatedTags, household_id) value
 insert into household_member (id, name, numberOfCreatedTags, household_id) values ('1', 'Alice', '0', 'h1');
 insert into household_member (id, name, numberOfCreatedTags, household_id) values ('2', 'Felix Lahnsteiner', '0', 'h2');
 
-INSERT INTO public.devicecategory (category_name) VALUES ('Kühlschrank');
+INSERT INTO public.devicecategory (category_name) VALUES ('Kuehlschrank');
 INSERT INTO public.devicecategory (category_name) VALUES ('Mikrowelle');
 
 insert into device (device_name, household_id, category_name) values ('Testname1', 'h1', 'Kühlschrank');

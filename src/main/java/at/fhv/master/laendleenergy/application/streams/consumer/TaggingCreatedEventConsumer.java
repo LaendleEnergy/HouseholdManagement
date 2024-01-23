@@ -8,6 +8,8 @@ import io.quarkus.redis.datasource.pubsub.PubSubCommands;
 import io.quarkus.runtime.Startup;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @ApplicationScoped
@@ -24,10 +26,12 @@ public class TaggingCreatedEventConsumer implements Consumer<TaggingCreatedEvent
 
     @Override
     public void accept(TaggingCreatedEvent taggingCreatedEvent) {
-        try {
-            eventHandler.handleTaggingCreatedEvent(taggingCreatedEvent);
-        } catch (HouseholdNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        CompletableFuture.runAsync(() -> {
+            try {
+                eventHandler.handleTaggingCreatedEvent(taggingCreatedEvent);
+            } catch (HouseholdNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

@@ -7,6 +7,8 @@ import io.quarkus.redis.datasource.pubsub.PubSubCommands;
 import io.quarkus.runtime.Startup;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @ApplicationScoped
@@ -23,7 +25,10 @@ public class HouseholdCreatedEventConsumer implements Consumer<HouseholdCreatedE
 
     @Override
     public void accept(HouseholdCreatedEvent householdCreatedEvent) {
-        eventHandler.handleHouseholdCreatedEvent(householdCreatedEvent);
+        System.out.println("in accept");
+        CompletableFuture.runAsync(() -> {
+            System.out.println(householdCreatedEvent.getEventId());
+            eventHandler.handleHouseholdCreatedEvent(householdCreatedEvent);
+        });
     }
-
 }
