@@ -32,7 +32,7 @@ public class DeviceRepositoryTests {
     static Device device;
     static final String deviceName = "fancyname";
     static DeviceCategory deviceCategory;
-    static final String deviceCategoryName = "Kühlschrank";
+    static final String deviceCategoryName = "Kuehlschrank";
     static Household household;
     static final String householdId = "householdId1";
 

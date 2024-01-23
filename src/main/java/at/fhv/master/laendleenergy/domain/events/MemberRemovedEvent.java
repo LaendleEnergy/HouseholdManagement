@@ -7,10 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class MemberRemovedEvent extends Event {
-    private String eventId;
-    private String memberId;
-    private String householdId;
-    private LocalDateTime timestamp;
 
     public MemberRemovedEvent() {}
 

@@ -10,8 +10,8 @@ public class DeviceCategoryAddedEvent extends Event {
 
     public DeviceCategoryAddedEvent() {}
 
-    public DeviceCategoryAddedEvent(String deviceId, String memberId, String name, String householdId) {
-        super(UUID.randomUUID().toString(), memberId, householdId, LocalDateTime.now());
+    public DeviceCategoryAddedEvent(String eventId, String deviceId, String memberId, String name, String householdId) {
+        super(eventId, memberId, householdId, LocalDateTime.now());
         this.deviceId = deviceId;
         this.name = name;
     }

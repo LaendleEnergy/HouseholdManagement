@@ -83,5 +83,15 @@ public class Household {
     }
     public void removeMember(String memberId) {
         householdMembers.removeIf(m -> m.getId().equals(memberId));
+        System.out.println(memberId);
     }
+    public void updateMember(String memberId, String name) {
+        for (HouseholdMember m : householdMembers) {
+            if (m.getId().equals(memberId)) {
+                m.setName(name);
+            }
+        }
+    }
+
+
 }

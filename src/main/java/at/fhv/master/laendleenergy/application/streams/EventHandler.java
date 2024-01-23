@@ -52,7 +52,19 @@ public class EventHandler {
     @Transactional
     public void handleMemberRemovedEvent(MemberRemovedEvent event) throws HouseholdNotFoundException {
         Household household = householdRepository.getHouseholdById(event.getHouseholdId());
+        System.out.println(household.getHouseholdMembers().size());
+
         household.removeMember(event.getMemberId());
+
+        System.out.println(household.getHouseholdMembers().size());
+
+        householdRepository.updateHousehold(household);
+    }
+
+    @Transactional
+    public void handleMemberUpdatedEvent(MemberUpdatedEvent event) throws HouseholdNotFoundException {
+        Household household = householdRepository.getHouseholdById(event.getHouseholdId());
+        household.updateMember(event.getMemberId(), event.getName());
 
         householdRepository.updateHousehold(household);
     }

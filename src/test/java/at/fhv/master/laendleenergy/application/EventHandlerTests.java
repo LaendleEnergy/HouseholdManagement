@@ -77,6 +77,23 @@ public class EventHandlerTests {
     }
 
     @Test
+    public void handleUpdatedAddedEvent() throws HouseholdNotFoundException {
+        assertEquals(3, household.getHouseholdMembers().size());
+
+        MemberUpdatedEvent event = new MemberUpdatedEvent("event1", memberId, "newname", householdId, LocalDateTime.of(1900,1,1,1,1));
+        eventHandler.handleMemberUpdatedEvent(event);
+
+        for (HouseholdMember m : household.getHouseholdMembers()) {
+            if (m.getId().equals(memberId)) {
+                assertEquals("newname", m.getName());
+            }
+        }
+
+        Mockito.verify(householdRepository, times(1)).updateHousehold(any());
+    }
+
+
+    @Test
     public void handleMemberRemovedEvent() throws HouseholdNotFoundException {
         assertEquals(3, household.getHouseholdMembers().size());
 
@@ -100,7 +117,7 @@ public class EventHandlerTests {
 
     @Test
     public void testHandleDeviceCategoryAddedEvent() {
-        DeviceCategoryAddedEvent event = new DeviceCategoryAddedEvent("d1", "m1", "name1","h1");
+        DeviceCategoryAddedEvent event = new DeviceCategoryAddedEvent("event1", "d1", "m1", "name1","h1");
         eventHandler.handleDeviceCategoryAddedEvent(event);
 
         Mockito.verify(deviceRepository, times(1)).addDeviceCategory(any());

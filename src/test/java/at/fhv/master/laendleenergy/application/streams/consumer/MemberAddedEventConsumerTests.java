@@ -10,6 +10,8 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.time.LocalDateTime;
+
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 
 @QuarkusTest
@@ -25,6 +27,6 @@ public class MemberAddedEventConsumerTests {
         MemberAddedEvent event = new MemberAddedEvent("event1", "member1", "name", "household1", LocalDateTime.of(2000,1,1,1,1,1));
         consumer.accept(event);
 
-        Mockito.verify(eventHandler, times(1)).handleMemberAddedEvent(event);
+        Mockito.verify(eventHandler, timeout(100).times(1)).handleMemberAddedEvent(event);
     }
 }

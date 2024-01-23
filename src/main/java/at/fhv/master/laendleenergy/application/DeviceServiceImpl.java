@@ -1,6 +1,6 @@
 package at.fhv.master.laendleenergy.application;
 
-import at.fhv.master.laendleenergy.application.streams.publisher.DeviceCreatedEventPublisher;
+import at.fhv.master.laendleenergy.application.streams.publisher.DeviceAddedEventPublisher;
 import at.fhv.master.laendleenergy.domain.Device;
 import at.fhv.master.laendleenergy.domain.DeviceCategory;
 import at.fhv.master.laendleenergy.domain.Household;
@@ -17,8 +17,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -29,7 +32,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Inject
     DeviceRepository deviceRepository;
     @Inject
-    DeviceCreatedEventPublisher deviceCreatedEventPublisher;
+    DeviceAddedEventPublisher deviceAddedEventPublisher;
 
     @Override
     @Transactional
@@ -39,9 +42,10 @@ public class DeviceServiceImpl implements DeviceService {
 
         Device device = new Device(categoryLoaded, name, household);
         deviceRepository.addDevice(device);
-        deviceCreatedEventPublisher.publishMessage(
+
+        deviceAddedEventPublisher.publishMessage(
                 DeviceAddedEventSerializer.parse(
-                        new DeviceAddedEvent(deviceId, memberId, device.getName(), householdId, categoryLoaded.getCategoryName())
+                        new DeviceAddedEvent(UUID.randomUUID().toString(), deviceId, memberId, device.getName(), householdId, categoryLoaded.getCategoryName(), LocalDateTime.now())
                 )
         );
     }
@@ -57,13 +61,9 @@ public class DeviceServiceImpl implements DeviceService {
     @Transactional
     public void updateDevice(DeviceDTO deviceDTO, String householdId) throws HouseholdNotFoundException, DeviceCategoryNotFound, DeviceNotFoundException {
         Household household = householdRepository.getHouseholdById(householdId);
-        System.out.println(household.getId());
         DeviceCategory deviceCategory = deviceRepository.getDeviceCategoryByName(deviceDTO.getCategoryName());
-        System.out.println(deviceCategory.getCategoryName());
-        System.out.println(household.getDevices().get(0).getName());
-        System.out.println(deviceDTO.getName());
         Optional<Device> device = household.getDevices().stream().filter(d -> d.getName().equals(deviceDTO.getName())).findFirst();
-        System.out.println(device.isPresent());
+
         if (device.isEmpty()) {
             throw new DeviceNotFoundException();
         }

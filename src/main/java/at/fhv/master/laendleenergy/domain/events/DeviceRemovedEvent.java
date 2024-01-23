@@ -9,8 +9,8 @@ public class DeviceRemovedEvent extends Event {
 
     public DeviceRemovedEvent() {}
 
-    public DeviceRemovedEvent(String memberId, String name, String householdId, LocalDateTime timestamp, String deviceCategoryName) {
-        super(UUID.randomUUID().toString(), memberId, householdId, timestamp);
+    public DeviceRemovedEvent(String eventId, String memberId, String name, String householdId, LocalDateTime timestamp, String deviceCategoryName) {
+        super(eventId, memberId, householdId, timestamp);
         this.deviceName = name;
         this.deviceCategoryName = deviceCategoryName;
     }

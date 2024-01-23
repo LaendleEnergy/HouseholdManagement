@@ -41,7 +41,7 @@ public class DeviceIntegrationTest {
     @InjectMock
     EntityManager entityManager;
     private final String validJwtToken = "eyJraWQiOiIvcHJpdmF0ZWtleS5wZW0iLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FyZDMzMy5jb20iLCJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTcwNDcxMTgwMCwiZXhwIjozNjAwMTcwNDcxMTgwMCwiZ3JvdXBzIjpbIkFkbWluIl0sIm1lbWJlcklkIjoiMSIsImhvdXNlaG9sZElkIjoiaDEiLCJkZXZpY2VJZCI6IkQxIiwianRpIjoiYzlhNjJmYWEtMGIxZS00YzdiLTk3MDQtOTY0N2YwNGZmZDFjIn0.XgV-PnqA_LB9OFFE8-zr0UIMugTb6P4qPvymCoancALWvS4VJjF-tXjU02yms0YvSXC-GmpbyUDZtiPm26KApjawXaoNSa5gonsnTHl6s4bT8MkgUrNNs9Di9KmCHgoTohgr9B7pelM6eJCOf5tT-phkoSvaxxrYn099BYsUeA1DVVsApic1egEV1ItZYRops8XUR-KPydeimgYq6tpc2g-7L7RiNIYkssvVxxh25-EGn8lLkivBu3gA7_2siCZfVZbP8JWagT629OK9B_GpnOhz8_-p5KSjMRjDTJBcRTnzYQDGzOB-RmsB0NZaLPw5ulqR1yN3r5KEpm-GExAKRw";
-    static final String deviceDTOJSONString = "{\"name\":\"name\",\"categoryName\":\"microwave\"}";
+    static final String deviceDTOJSONString = "{\"name\":\"name\",\"categoryName\":\"Mikrowelle\"}";
     static String householdId = "h1";
     static Household household;
     static Device device;
@@ -49,14 +49,14 @@ public class DeviceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        DeviceDTO deviceDTO = new DeviceDTO("name", "microwave");
-        DeviceCategory deviceCategory = new DeviceCategory("microwave");
+        DeviceDTO deviceDTO = new DeviceDTO("name", "Mikrowelle");
+        DeviceCategory deviceCategory = new DeviceCategory("Mikrowelle");
         household = new Household(householdId, new Incentive(), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
         device = new Device(deviceCategory, deviceDTO.getName(), household);
         household.setDevices(List.of(device));
 
         Mockito.when(entityManager.find(Household.class, householdId)).thenReturn(household);
-        Mockito.when(entityManager.find(DeviceCategory.class, "microwave")).thenReturn(deviceCategory);
+        Mockito.when(entityManager.find(DeviceCategory.class, "Mikrowelle")).thenReturn(deviceCategory);
     }
 
     @Test

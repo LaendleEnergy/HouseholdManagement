@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,15 +29,15 @@ public class DomainTests {
 
     @Test
     public void deviceTest() {
-        DeviceCategory deviceCategory = new DeviceCategory("microwave");
-        Device device = new Device(new DeviceCategory("fridge"), "Kühlschrank1", household);
+        DeviceCategory deviceCategory = new DeviceCategory("Mikrowelle");
+        Device device = new Device(new DeviceCategory("Kuehlschrank"), "Kuehlschrank1", household);
         device.setDeviceCategory(deviceCategory);
-        device.setName("Kühlschrank2");
+        device.setName("Kuehlschrank2");
         Household newHousehold = new Household();
         device.setHousehold(newHousehold);
 
         assertEquals(deviceCategory, device.getDeviceCategory());
-        assertEquals("Kühlschrank2", device.getName());
+        assertEquals("Kuehlschrank2", device.getName());
         assertEquals(newHousehold, device.getHousehold());
     }
 
@@ -115,6 +116,22 @@ public class DomainTests {
     }
 
     @Test
+    public void householdMemberUpdateTest() {
+        String oldName = "oldname";
+        String newName = "newname";
+
+        HouseholdMember householdMember = new HouseholdMember("1", oldName, 0, household);
+        Household household = new Household("householdid", new Incentive(), new EnergySavingTarget(), new LinkedList<>(), new LinkedList<>());
+        assertEquals(0, household.getHouseholdMembers().size());
+
+        household.addMemberToHousehold(householdMember);
+        assertEquals(oldName, household.getHouseholdMembers().get(0).getName());
+
+        household.updateMember(householdMember.getId(), newName);
+        assertEquals(newName, household.getHouseholdMembers().get(0).getName());
+    }
+
+    @Test
     public void householdRemoveMemberTest() {
         MemberRemovedEvent event = new MemberRemovedEvent("event1", "member1", "household1", LocalDateTime.now());
 
@@ -168,6 +185,22 @@ public class DomainTests {
     }
 
     @Test
+    public void memberUpdatedEventTest() {
+        MemberUpdatedEvent event = new MemberUpdatedEvent("event1", "member1", "name", "household1", LocalDateTime.now());
+        event.setEventId("event2");
+        event.setName("name");
+        event.setTimestamp(LocalDateTime.of(2000,1,1, 1, 1, 1));
+        event.setMemberId("user1");
+        event.setHouseholdId("household1");
+
+        assertEquals("event2", event.getEventId());
+        assertEquals("name", event.getName());
+        assertEquals(LocalDateTime.of(2000,1,1, 1, 1, 1), event.getTimestamp());
+        assertEquals("user1", event.getMemberId());
+        assertEquals("household1", event.getHouseholdId());
+    }
+
+    @Test
     public void memberRemovedEventTest() {
         MemberRemovedEvent event = new MemberRemovedEvent("event1", "member1", "household1", LocalDateTime.now());
         event.setEventId("event2");
@@ -199,17 +232,17 @@ public class DomainTests {
 
     @Test
     public void deviceAddedEventTest() {
-        DeviceAddedEvent event = new DeviceAddedEvent("d1", "m1", "name1", "h1", "c1");
-        event.setDeviceName("name2");
-        event.setDeviceCategoryName("c2");
+        DeviceAddedEvent event = new DeviceAddedEvent("event1", "d1", "m1", "name1", "h1", "c1", LocalDateTime.of(2000,1,1,1,1));
+        event.setName("name2");
+        event.setCategoryName("c2");
 
-        assertEquals("name2", event.getDeviceName());
-        assertEquals("c2", event.getDeviceCategoryName());
+        assertEquals("name2", event.getName());
+        assertEquals("c2", event.getCategoryName());
     }
 
     @Test
     public void deviceCategoryAddedEventTest() {
-        DeviceCategoryAddedEvent event = new DeviceCategoryAddedEvent("d1", "m1", "name1", "h1");
+        DeviceCategoryAddedEvent event = new DeviceCategoryAddedEvent("event1", "d1", "m1", "name1", "h1");
         event.setName("name2");
 
         assertEquals("name2", event.getName());
@@ -217,7 +250,7 @@ public class DomainTests {
 
     @Test
     public void deviceRemovedEventTest() {
-        DeviceRemovedEvent event = new DeviceRemovedEvent("m1", "name", "h1", LocalDateTime.now(), "c1");
+        DeviceRemovedEvent event = new DeviceRemovedEvent(UUID.randomUUID().toString(), "m1", "name", "h1", LocalDateTime.now(), "c1");
         event.setDeviceName("name2");
         event.setDeviceCategoryName("c2");
 

@@ -4,37 +4,37 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class DeviceAddedEvent extends Event {
-    private String deviceName;
-    private String deviceCategoryName;
+    private String name;
+    private String categoryName;
 
     private String deviceId;
 
     public DeviceAddedEvent() {}
 
-    public DeviceAddedEvent(String deviceId, String memberId, String name, String householdId,  String deviceCategoryName) {
-        super(UUID.randomUUID().toString(), memberId, householdId, LocalDateTime.now());
+    public DeviceAddedEvent(String eventId, String deviceId, String memberId, String name, String householdId,  String categoryName, LocalDateTime timestamp) {
+        super(eventId, memberId, householdId, timestamp);
         this.deviceId = deviceId;
-        this.deviceName = name;
-        this.deviceCategoryName = deviceCategoryName;
+        this.name = name;
+        this.categoryName = categoryName;
     }
 
-    public String getDeviceName() {
-        return deviceName;
+    public String getName() {
+        return name;
     }
 
-    public String getDeviceCategoryName() {
-        return deviceCategoryName;
+    public String getCategoryName() {
+        return categoryName;
     }
 
     public String getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setDeviceCategoryName(String deviceCategoryName) {
-        this.deviceCategoryName = deviceCategoryName;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
