@@ -246,6 +246,7 @@ public class DomainTests {
         event.setName("name2");
 
         assertEquals("name2", event.getName());
+        assertEquals("d1", event.getDeviceId());
     }
 
     @Test
